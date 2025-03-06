@@ -14,8 +14,15 @@ export default function Home() {
         {/* Основной контент */}
         <div className="relative">
           {/* Фоновый ковёр */}
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="w-full h-full bg-[url('/carpet-pattern.png')] bg-repeat opacity-20"></div>
+          <div className="absolute inset-0 pointer-events-none">
+            <div 
+              className="w-full h-full bg-center bg-repeat"
+              style={{
+                backgroundImage: "url('/carpet-pattern.png')",
+                backgroundSize: '400px', // Уменьшим размер паттерна
+                opacity: '0.4' // Увеличим непрозрачность
+              }}
+            ></div>
           </div>
 
           {/* Кнопка авторизации */}
