@@ -7,7 +7,6 @@ export default function DashboardPage() {
     const { data: session, status } = useSession();
     const [repositories, setRepositories] = useState([]);
     const [loading, setLoading] = useState(false);
-    console.log(session)
 
     const fetchRepositories = async (accessToken) => {
         setLoading(true);
@@ -29,8 +28,8 @@ export default function DashboardPage() {
 
     // Загружаем репозитории при загрузке страницы
     useEffect(() => {
-        if (session?.access_token) {
-            fetchRepositories(session.access_token);
+        if (session?.accessToken) {
+            fetchRepositories(session.accessToken);
         }
     }, [session]);
 

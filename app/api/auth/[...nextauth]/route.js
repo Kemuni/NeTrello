@@ -9,16 +9,15 @@ const handler = NextAuth({
         }),
     ],
     callbacks: {
-        async session({ session, token }) {
-            // Добавляем информацию о пользователе в сессию
+        async session({ session, token, user }) {
             session.user.id = token.sub;
-            session.user.jti = token.jti;
+            session.accessToken = token.accessToken;
             return session;
         },
-        async jwt({ token, user }) {
-            if (user) {
+        async jwt({ token, account, user }) {
+            if (account) {
                 token.id = user.id;
-                token.accessToken = user.access_token
+                token.accessToken = account.access_token
             }
             return token;
         },
