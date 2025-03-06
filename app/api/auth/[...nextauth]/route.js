@@ -6,6 +6,11 @@ const handler = NextAuth({
         GitLabProvider({
             clientId: process.env.GITLAB_CLIENT_ID,
             clientSecret: process.env.GITLAB_CLIENT_SECRET,
+            authorization: {
+                params: {
+                    scope: "read_user read_api read_repository",
+                }
+            }
         }),
     ],
     callbacks: {
