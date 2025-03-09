@@ -13,6 +13,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Monomakh&display=swap" rel="stylesheet" />
+      </head>
       <body>
         <Providers>{children}</Providers>
       </body>

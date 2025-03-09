@@ -1,57 +1,69 @@
-import Image from 'next/image'
-import Link from 'next/link'
+'use client'
+
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    // Принудительно устанавливаем стили для body
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.height = '100vh';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      // Очистка при размонтировании
+      document.body.style.height = '';
+      document.body.style.margin = '';
+      document.body.style.padding = '';
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        {/* Заголовок */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-amber-100 mb-4 font-['Courier_New'] border-2 border-amber-200/30 inline-block px-8 py-4 rounded-lg backdrop-blur-sm">
-            Трелло по-русски
-          </h1>
-        </div>
-
-        {/* Основной контент */}
-        <div className="relative">
-          {/* Фоновый ковёр */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div 
-              className="w-full h-full bg-center bg-repeat"
-              style={{
-                backgroundImage: "url('/carpet-pattern.png')",
-                backgroundSize: '400px', // Уменьшим размер паттерна
-                opacity: '0.4' // Увеличим непрозрачность
-              }}
-            ></div>
-          </div>
-
-          {/* Кнопка авторизации */}
-          <div className="flex justify-center mb-8">
-            <Link href="/boards" className="bg-amber-100/10 hover:bg-amber-100/20 text-amber-100 font-semibold py-3 px-6 rounded-lg border border-amber-200/30 backdrop-blur-sm transition-all duration-300 flex items-center gap-2">
-              <span>Авторизоваться через Гитлаб</span>
-              <span className="text-orange-400">♥</span>
-            </Link>
-          </div>
-
-          {/* Карточки */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-gray-700 hover:border-amber-200/30 transition-all duration-300">
-                <h3 className="text-amber-100 text-xl mb-4 font-['Courier_New']">Доска {item}</h3>
-                <p className="text-gray-400">Здесь могут быть ваши задачи...</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Персонаж */}
-        <div className="fixed bottom-4 left-4 opacity-80 hover:opacity-100 transition-opacity duration-300">
-          <div className="w-24 h-24 bg-gray-800 rounded-full border-2 border-amber-200/30 flex items-center justify-center">
-            <span className="text-5xl">🤔</span>
-          </div>
-        </div>
-      </div>
+    <div 
+      className="monomakh-regular"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundImage: "url('/image.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Link 
+        href="/auth" 
+        className="monomakh-regular"
+        style={{
+          backgroundColor: 'rgba(102, 102, 102, 0.75)',
+          color: 'white',
+          fontWeight: 'bold',
+          padding: '10px 32px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          border: '2px solid rgb(134, 134, 134)',
+          fontSize: '45px',
+          textDecoration: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}
+      >
+        Авторизоваться через Гитлаб
+        <img src="/gitlab-logo.png" alt="icon" style={{ width: '74px', height: '74px' }} />
+      </Link>
     </div>
-  )
-} 
+  );
+}

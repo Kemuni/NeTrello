@@ -1,88 +1,107 @@
-import Image from 'next/image'
-import Link from 'next/link'
+'use client'
+
+import React from 'react';
 
 export default function Boards() {
-  const boards = [
+  const cards = [
     { id: 1, title: "Доска 1", image: "/board1.jpg" },
     { id: 2, title: "Доска 2", image: "/board2.jpg" },
-    { id: 3, title: "Доска 3", image: "/board3.jpg" }
+    { id: 3, title: "Доска 3", image: "/board3.jpg" },
+    { id: 4, title: "Доска 4", image: "/board1.jpg" },
+    { id: 5, title: "Доска 5", image: "/board2.jpg" },
+    { id: 6, title: "Доска 6", image: "/board3.jpg" },
+    { id: 7, title: "Доска 7", image: "/board1.jpg" },
+    { id: 8, title: "Доска 8", image: "/board2.jpg" },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        {/* Заголовок */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-amber-100 mb-4 font-['Courier_New'] border-2 border-amber-200/30 inline-block px-8 py-4 rounded-lg backdrop-blur-sm">
-            Управление досками
-          </h1>
-        </div>
-
-        {/* Основной контент */}
-        <div className="relative">
-          {/* Фоновый ковёр */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div 
-              className="w-full h-full bg-center bg-repeat"
+    <div
+      className="monomakh-regular"
+      style={{
+        minHeight: '100vh',
+        backgroundImage: "url('/image3.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}
+    >
+      <div
+        style={{
+          width: '80%',
+          marginTop: '100px',
+          maxWidth: '1200px',
+          
+          backgroundColor: 'rgba(124, 124, 124, 0.6)',
+          borderRadius: '25px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+          gap: '20px',
+          rowGap: '30px',
+          padding: '20px'
+        }}
+      >
+        {cards.map((card) => (
+          <div
+            key={card.id}
+            style={{
+              position: 'relative',
+              borderRadius: '15px',
+              overflow: 'hidden',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+              width: '100%',
+              height: '150px'
+            }}
+          >
+            <img
+              src={card.image}
+              alt={card.title}
               style={{
-                backgroundImage: "url('/carpet-pattern.png')",
-                backgroundSize: '400px',
-                opacity: '0.4'
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block'
               }}
-            ></div>
-          </div>
-
-          {/* Сетка досок */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-            {boards.map((board) => (
-              <div 
-                key={board.id}
-                className="relative group cursor-pointer w-full"
-              >
-                <div className="aspect-square relative overflow-hidden rounded-lg border-2 border-amber-200/30">
-                  <div className="relative w-[200px] h-[200px]">
-                    <Image
-                      src={board.image}
-                      alt={board.title}
-                      width={200}
-                      height={200}
-                      className="object-cover rounded-lg"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                    <h3 className="text-amber-100 text-lg font-['Courier_New']">{board.title}</h3>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Кнопка добавления новой доски */}
-            <div className="aspect-square relative w-full">
-              <button className="w-full h-full flex items-center justify-center rounded-lg border-2 border-dashed border-amber-200/30 bg-gray-800/50 hover:bg-gray-700/50 transition-colors duration-300">
-                <span className="text-6xl text-amber-200/70">+</span>
-              </button>
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: '10px',
+                left: '10px',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                color: 'white',
+                padding: '5px 10px',
+                borderRadius: '4px'
+              }}
+            >
+              {card.title}
             </div>
           </div>
-        </div>
+        ))}
 
-        {/* Персонаж */}
-        <div className="fixed bottom-4 left-4 opacity-80 hover:opacity-100 transition-opacity duration-300">
-          <div className="w-24 h-24 bg-gray-800 rounded-full border-2 border-amber-200/30 flex items-center justify-center">
-            <span className="text-5xl">🤔</span>
-          </div>
-        </div>
-
-        {/* Кнопка возврата на главную страницу */}
-        <div className="absolute top-4 left-4">
-          <Link 
-            href="/" 
-            className="text-amber-100 hover:text-amber-200 transition-colors duration-300"
-          >
-            ← На главную
-          </Link>
+        {/* Карточка-кнопка для добавления новых карточек */}
+        <div
+          style={{
+            position: 'relative',
+            borderRadius: '15px',
+            overflow: 'hidden',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            width: '100%',
+            height: '150px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.2)', // Прозрачный фон
+            cursor: 'pointer'
+          }}
+          onClick={() => alert('Добавить новую карточку')}
+        >
+          <span style={{ color: 'white', fontSize: '24px' }}>+</span>
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}
