@@ -1,10 +1,15 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import {signIn, useSession} from "next-auth/react";
+import {redirect} from "next/navigation";
 
 export default function Home() {
+  const { status } = useSession();
   const [mounted, setMounted] = useState(false);
+
+  // Если пользователь уже авторизован, то мы переводим его с главной страницы на доски
+  if (status === "authenticated") return redirect('/boards')
 
   useEffect(() => {
     setMounted(true);
@@ -43,8 +48,8 @@ export default function Home() {
         justifyContent: 'center',
       }}
     >
-      <Link 
-        href="/auth" 
+      <button
+        onClick={() => signIn("gitlab")}
         className="monomakh-regular"
         style={{
           backgroundColor: 'rgba(102, 102, 102, 0.75)',
@@ -58,12 +63,13 @@ export default function Home() {
           textDecoration: 'none',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px'
+          gap: '8px',
+          cursor: "pointer",
         }}
       >
         Авторизоваться через Гитлаб
         <img src="/gitlab-logo.png" alt="icon" style={{ width: '74px', height: '74px' }} />
-      </Link>
+      </button>
     </div>
   );
 }

@@ -1,18 +1,20 @@
 'use client'
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {useFetchUserRepositories} from "../../services/gitlab";
+import {useSession} from "next-auth/react";
+import {redirect} from "next/navigation";
+import Link from "next/link";
+
 
 export default function Boards() {
-  const cards = [
-    { id: 1, title: "Доска 1", image: "/board1.jpg" },
-    { id: 2, title: "Доска 2", image: "/board2.jpg" },
-    { id: 3, title: "Доска 3", image: "/board3.jpg" },
-    { id: 4, title: "Доска 4", image: "/board1.jpg" },
-    { id: 5, title: "Доска 5", image: "/board2.jpg" },
-    { id: 6, title: "Доска 6", image: "/board3.jpg" },
-    { id: 7, title: "Доска 7", image: "/board1.jpg" },
-    { id: 8, title: "Доска 8", image: "/board2.jpg" },
-  ];
+  const { data: session, status } = useSession();
+  // @ts-ignore
+  if (status !== "authenticated" || session?.accessToken === undefined) redirect('/')
+
+  // @ts-ignore
+  const {repos, isLoading, error} = useFetchUserRepositories(session.accessToken);
+  console.log(repos, isLoading, error)
 
   return (
     <div
@@ -44,9 +46,10 @@ export default function Boards() {
           padding: '20px'
         }}
       >
-        {cards.map((card) => (
-          <div
-            key={card.id}
+        {repos.map((repo) => (
+          <Link
+            href={`/boards/${repo.id}`}
+            key={repo.id}
             style={{
               position: 'relative',
               borderRadius: '15px',
@@ -57,8 +60,8 @@ export default function Boards() {
             }}
           >
             <img
-              src={card.image}
-              alt={card.title}
+              src={repo.avatar_url ?? `/board${repo.id % 3 + 1}.jpg`}
+              alt={repo.name}
               style={{
                 width: '100%',
                 height: '100%',
@@ -77,9 +80,9 @@ export default function Boards() {
                 borderRadius: '4px'
               }}
             >
-              {card.title}
+              {repo.name}
             </div>
-          </div>
+          </Link>
         ))}
 
         {/* Карточка-кнопка для добавления новых карточек */}
