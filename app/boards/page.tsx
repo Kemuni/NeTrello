@@ -32,7 +32,7 @@ export default function Boards() {
         style={{
           width: '80%',
           marginTop: '100px',
-          maxWidth: '1200px',
+          maxWidth: '900px',
           
           backgroundColor: 'rgba(124, 124, 124, 0.6)',
           borderRadius: '25px',

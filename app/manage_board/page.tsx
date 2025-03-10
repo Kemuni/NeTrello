@@ -41,8 +41,41 @@ const NewPage: React.FC = () => {
                 borderRadius: '50px',
                 cursor: 'pointer'
             }}>
-                <img src="/icons/arrow-left.png" alt="arrow-left" style={{ width: '100%', height: '100%' }} />
+                <img src="/arrow-left.png" alt="arrow-left" style={{ width: '100%', height: '80%' }} />
             </button>
+            
+            <button style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '10px',
+                width: '80px',
+                height: '80px',
+                backgroundColor: 'red',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '50px',
+                cursor: 'pointer'
+            }}>
+                <img src="/question.png" alt="question" style={{ width: '100%', height: '60%' }} />
+            </button>
+
+            <button style={{
+                position: 'absolute',
+                bottom: '10px',
+                right: '10px',
+                width: '80px',
+                height: '80px',
+                backgroundColor: 'red',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '50px',
+                cursor: 'pointer'
+            }}>
+                <img src="/additio.png" alt="addition" style={{ width: '100%', height: '65%' }} />
+            </button>
+
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-around',
