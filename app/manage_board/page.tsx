@@ -73,7 +73,7 @@ const NewPage: React.FC = () => {
                 borderRadius: '50px',
                 cursor: 'pointer'
             }}>
-                <img src="/additio.png" alt="addition" style={{ width: '100%', height: '65%' }} />
+                <img src="/addition.png" alt="addition" style={{ width: '100%', height: '65%' }} />
             </button>
 
             <div style={{
