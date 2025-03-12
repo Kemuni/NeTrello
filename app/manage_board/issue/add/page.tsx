@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 
 interface TaskCardProps {
@@ -10,27 +11,76 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ title, assignee, description, dueDate }) => {
     return (
         <div style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            border: '2px solid #ccc',
-            borderRadius: '10px',
-            padding: '20px',
+            position: 'relative',
             width: '60%',
             margin: '20px auto',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            fontFamily: 'Monomakh, sans-serif'
+            fontFamily: 'Monomakh, sans-serif',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh'
         }}>
-
+            <img src="/packet.png" alt="packett" style={{
+                position: 'absolute',
+                top: '-20px',
+                left: '-20px',
+                right: '-20px',
+                bottom: '-20px',
+                width: 'calc(100% + 40px)',
+                height: 'calc(100% + 40px)',
+                zIndex: 1,
+                borderRadius: '10px'
+            }} />
+                        <div style={{
+                position: 'relative',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                border: '2px solid #ccc',
+                borderRadius: '10px',
+                padding: '20px',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                zIndex: 2
+            }}>
             <h2 style={{ color: '#333', fontSize: '50px', fontWeight: 'bold', textAlign: 'center', marginBottom: '20px' }}>{title}</h2>
             <p style={{ fontSize: '32px', marginTop: '20px' }}>Задача закреплена за:
                 <br />
-                <span style={{ color: '#773306'}}>{assignee}</span>
+                <input 
+                    type="text" 
+                    style={{ 
+                        color: '#773306', 
+                        fontSize: '32px', 
+                        width: '100%', 
+                        border: 'none', 
+                        borderBottom: '1px solid #ccc',
+                        outline: 'none'
+                    }} 
+                />
             </p>
-                <p style={{ fontSize: '32px', marginTop: '20px' }}>Описание задачи:
+            <p style={{ fontSize: '32px', marginTop: '20px' }}>Описание задачи:
                 <br />
-                <span style={{ color: '#773306'}}>{description}</span>
+                <input 
+                    type="text" 
+                    style={{ 
+                        color: '#773306', 
+                        fontSize: '32px', 
+                        width: '100%', 
+                        border: 'none', 
+                        borderBottom: '1px solid #ccc',
+                        outline: 'none'
+                    }} 
+                />
             </p>
             <p style={{ fontSize: '32px', marginTop: '20px' }}>Срок выполнения:
-                <span style={{ color: '#773306' }}>{dueDate}</span>
+                <input 
+                    type="text" 
+                    style={{ 
+                        color: '#773306', 
+                        fontSize: '32px', 
+                        width: '100%', 
+                        border: 'none', 
+                        borderBottom: '1px solid #ccc',
+                        outline: 'none'
+                    }} 
+                />
             </p>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <button style={{
@@ -41,7 +91,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, assignee, description, dueDa
                     cursor: 'pointer',
                     fontSize: '23px',
                     marginTop: '35px'
-                }}>Удалить</button>
+                }}>Отменить</button>
                 <button style={{
                     backgroundColor: '#ddd',
                     border: 'none',
@@ -50,18 +100,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, assignee, description, dueDa
                     cursor: 'pointer',
                     fontSize: '23px',
                     marginTop: '35px'
-                }}>Изменить</button>
-                <button style={{
-                    backgroundColor: '#ddd',
-                    border: 'none',
-                    borderRadius: '5px',
-                    padding: '10px 20px',
-                    cursor: 'pointer',
-                    fontSize: '23px',
-                    marginTop: '35px'
-                }}>Завершить</button>
+                }}>Добавить</button>
             </div>
-
+        </div>
         </div>
     );
 };
