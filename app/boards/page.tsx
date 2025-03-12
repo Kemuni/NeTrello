@@ -5,6 +5,7 @@ import {useFetchUserRepositories} from "../../services/gitlab";
 import {useSession} from "next-auth/react";
 import {redirect} from "next/navigation";
 import Link from "next/link";
+import Modal from "../../components/modal/modal";
 
 
 export default function Boards() {
@@ -18,7 +19,7 @@ export default function Boards() {
 
   return (
     <div
-      className="monomakh-regular"
+      //className="monomakh-regular"
       style={{
         minHeight: '100vh',
         backgroundImage: "url('/image3.png')",
@@ -86,24 +87,7 @@ export default function Boards() {
         ))}
 
         {/* Карточка-кнопка для добавления новых карточек */}
-        <div
-          style={{
-            position: 'relative',
-            borderRadius: '15px',
-            overflow: 'hidden',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-            width: '100%',
-            height: '150px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.2)', // Прозрачный фон
-            cursor: 'pointer'
-          }}
-          onClick={() => alert('Добавить новую карточку')}
-        >
-          <span style={{ color: 'white', fontSize: '24px' }}>+</span>
-        </div>
+        <Modal/>
       </div>
     </div>
   );
