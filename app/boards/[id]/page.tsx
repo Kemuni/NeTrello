@@ -3,14 +3,28 @@
 import React, {useEffect, useState} from 'react';
 import {redirect} from "next/navigation";
 import {useSession} from "next-auth/react";
-import {IssueList, useCreateNewIssueList, useFetchIssueBoards} from "../../../services/gitlab";
+import {IssueList, Issue, useCreateNewIssueList, useFetchIssueBoards, useFetchProjectIssues} from "../../../services/gitlab";
 import Link from "next/link";
 
 
-const ListComponent: React.FC<{ title: string }> = ({ title }) => {
+interface IssueListProps extends IssueList {
+  issues?: Issue[]
+}
+
+
+const ListComponent: React.FC<{ title: string, issues: Issue[] }> = ({ title, issues }) => {
   return (
     <div className="bg-[rgba(124,124,124,0.5)] w-[30%] h-full rounded-2xl border-4 border-gray-300 flex flex-col items-center pt-5 flex-shrink-0">
       <h2 className="text-5xl text-white">{title}</h2>
+      {
+        issues !== undefined
+          ? issues.map((i) =>
+            <div key={i.id} className="text-2xl border p-2">
+              Название: {i.title}<br/>Автор: {i.author.name}<br/>Метки: {i.labels.join(", ")}
+            </div>
+          )
+          : null
+      }
     </div>
   );
 };
@@ -65,8 +79,10 @@ const Board: React.FC = ({params,}: { params: { id: number }}) => {
     redirect('/boards')
   }
 
-  let initialLists = [];
-  const [lists, setLists] = useState<IssueList[]>(initialLists);
+  let initialLists: IssueListProps[] = [];
+  const [openedListIssues, setOpenedListIssues] = useState<Issue[]>([]);
+  const [closedListIssues, setClosedListIssues] = useState<Issue[]>([]);
+  const [lists, setLists] = useState<IssueListProps[]>(initialLists);
   const [showAddList, setShowAddList] = useState(false);
   const [boardId, setBoardId] = useState<null | number>(null);
 
@@ -74,30 +90,52 @@ const Board: React.FC = ({params,}: { params: { id: number }}) => {
 
   // @ts-ignore
   const { issueBoards, isLoading:  isBoardsLoading, fetchIssueBoards} = useFetchIssueBoards();
-  const { createNewIssueList, isLoading:  isBoardCreationLoading} = useCreateNewIssueList();
+  const { createNewIssueList } = useCreateNewIssueList();
+  const { issues, isLoading: isIssuesLoading, fetchIssues } = useFetchProjectIssues();
 
   useEffect(() => {
     // @ts-ignore
     if (status === "unauthenticated" || (status === "authenticated" && session?.accessToken === undefined)) redirect('/');
-    // @ts-ignore
-    if (status === "authenticated") fetchIssueBoards(session?.accessToken, id);
+    if (status === "authenticated") {
+      // @ts-ignore
+      fetchIssueBoards(session?.accessToken, id);
+      // @ts-ignore
+      fetchIssues(session?.accessToken, id);
+    }
   }, [status]);
 
   useEffect(() => {
     if (issueBoards.length === 0) return;
     const board = issueBoards[0];
-    setBoardId(board.id);
     initialLists = board.lists;
     initialLists.sort((a, b) => a.position - b.position);
     setLists(initialLists);
+    setBoardId(board.id);
   }, [isBoardsLoading]);
+
+  useEffect(() => {
+    if (isBoardsLoading || isIssuesLoading || lists.length === 0) return;
+
+    for (const issue of issues) {
+      if (issue.state === "opened") setOpenedListIssues([...openedListIssues, issue]);
+      else setClosedListIssues([...closedListIssues, issue]);
+
+      for (const list of lists) {
+        if (issue.labels.some((i) => i === list.label.name)) {
+          list.issues === undefined ? list.issues = [issue] : list.issues.push(issue);
+          setLists([...lists])
+        }
+      }
+    }
+
+  }, [isBoardsLoading, isIssuesLoading]);
 
   if (isBoardsLoading) return <h1>Загрузка досок...</h1>;
   if (status === "loading" ) return <h1>Загрузка...</h1>;
 
   const handleAddList = (title: string) => {
     const newList: IssueList = {
-      id: 1,
+      id: title.length + 1,
       label: {name:title, color: "#FFF"},
       position: 1,
     };
@@ -114,13 +152,13 @@ const Board: React.FC = ({params,}: { params: { id: number }}) => {
       </Link>
 
       <div className="flex w-[80%] h-[80%] gap-4 overflow-x-auto">
-        <ListComponent title="Открытые" />
+        <ListComponent title="Открытые" issues={openedListIssues}/>
 
         {lists.map((list) => (
-          <ListComponent key={list.id} title={list.label.name} />
+          <ListComponent key={list.id} title={list.label.name} issues={list.issues}/>
         ))}
 
-        <ListComponent title="Закрытые" />
+        <ListComponent title="Закрытые" issues={closedListIssues}/>
 
         {showAddList ? (
           <AddList

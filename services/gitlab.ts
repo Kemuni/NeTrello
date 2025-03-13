@@ -64,7 +64,7 @@ interface GitLabAuthor {
 }
 
 
-interface Issue {
+export interface Issue {
   id: number
   project_id: number
   author: GitLabAuthor
@@ -204,39 +204,33 @@ export const useCreateNewIssueList = () => {
 }
 
 
-export const useFetchProjectIssues = (accessToken: string, projectId: number) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+export const useFetchProjectIssues = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [issues, setIssues] = useState<Issue[]>([]);
 
-  useEffect(() => {
+  const fetchIssues = useCallback(async (accessToken: string, projectId: number) => {
     setIsLoading(true);
-    const fetchData = async () => {
-      await axiosInstance
-        .get<Issue[]>(
-          `/api/v4/projects/${projectId}/issues`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-            timeout: 20000
-          }
-        )
-        .then(({ data }) => {
-          setIsLoading(false);
-          console.log(data);
-          setIssues(data);
-        })
-        .catch((e) => {
-          setIsLoading(false);
-          setError(e.toString());
-          console.log(e);
-        });
-    }
-
-    fetchData();
+    await axiosInstance
+      .get<Issue[]>(
+        `/api/v4/projects/${projectId}/issues`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 20000
+        }
+      )
+      .then(({ data }) => {
+        setIsLoading(false);
+        console.log(data);
+        setIssues(data);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        console.log(e);
+      });
   }, []);
 
-  return { issues, isLoading, error}
+  return { issues, isLoading, fetchIssues };
 }
