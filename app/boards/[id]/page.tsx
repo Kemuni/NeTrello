@@ -12,6 +12,7 @@ import {
 } from "../../../services/gitlab";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation"; // Добавляем useParams
+import UserProfile from "../../../components/UserProfile";
 
 interface IssueListProps extends IssueList {
   issues?: Issue[];
@@ -185,6 +186,7 @@ const Board: React.FC = ({params,}: { params: { id: number }}) => {
       <Link href={"/boards"} className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer">
         <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]" />
       </Link>
+      <UserProfile></UserProfile>
 
       <div className="flex w-[80%] h-[80%] gap-4 overflow-x-auto">
         <ListComponent title="Открытые" issues={openedListIssues}/>
