@@ -14,6 +14,19 @@ const PageComponent: React.FC<{ title: string }> = ({ title }) => {
     <div className="bg-[rgba(124,124,124,0.5)] w-[30%] h-full rounded-2xl border-4 border-gray-300 flex flex-col items-center pt-5 flex-shrink-0">
       <h2 className="text-5xl text-white">{title}</h2>
       {/* Здесь могут быть карточки, но пока их нет */}
+      <Card/>
+    </div>
+  );
+};
+
+const Card: React.FC = () => {
+  return (
+    <div className="flex justify-center items-center w-full relative">
+      <img src="/packet.png" alt="packett" className="w-[60%]" />
+      <div className="monomakh-regular absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[40%] w-[50%] max-w-[400px] text-center bg-gray-300 rounded-lg shadow-md">
+        <p className="my-2">Название</p>
+        <p>Дедлайн выполнения</p>
+      </div>
     </div>
   );
 };
@@ -107,7 +120,7 @@ const NewPage: React.FC = () => {
             className="bg-[rgba(124,124,124,0.5)] w-[30%] h-[15%] rounded-2xl border-4 border-gray-300 flex flex-col items-center pt-5 cursor-pointer flex-shrink-0"
             onClick={() => setShowAddPage(true)} // Показываем AddPage при клике
           >
-            <h2 className="text-5xl text-white">Добавить страницу</h2>
+            <h2 className="text-4xl text-white">Добавить страницу</h2>
           </div>
         )}
       </div>
