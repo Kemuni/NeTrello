@@ -19,7 +19,7 @@ const ListComponent: React.FC<{ title: string, issues: Issue[] }> = ({ title, is
       {
         issues !== undefined
           ? issues.map((i) =>
-            <div key={i.id} className="text-2xl border p-2">
+            <div key={i.id} className="text-2xl border p-2 mb-2 bg-amber-50">
               Название: {i.title}<br/>Автор: {i.author.name}<br/>Метки: {i.labels.join(", ")}
             </div>
           )
@@ -116,19 +116,27 @@ const Board: React.FC = ({params,}: { params: { id: number }}) => {
   useEffect(() => {
     if (isBoardsLoading || isIssuesLoading || lists.length === 0) return;
 
+    const newClosed = [];
+    const newOpened = [];
+    const listCopy = [...lists];
     for (const issue of issues) {
-      if (issue.state === "opened") setOpenedListIssues([...openedListIssues, issue]);
-      else setClosedListIssues([...closedListIssues, issue]);
+      if (issue.state === "opened") newOpened.push(issue);
+      else {
+        newClosed.push(issue);
+        continue;
+      }
 
-      for (const list of lists) {
-        if (issue.labels.some((i) => i === list.label.name)) {
-          list.issues === undefined ? list.issues = [issue] : list.issues.push(issue);
-          setLists([...lists])
+      for (const listId in listCopy) {
+        if (issue.labels.some((i) => i === lists[listId].label.name)) {
+          lists[listId].issues === undefined ? lists[listId].issues = [issue] : lists[listId].issues.push(issue);
         }
       }
     }
+    setClosedListIssues([...newClosed]);
+    setOpenedListIssues([...newOpened]);
+    setLists([...lists])
 
-  }, [isBoardsLoading, isIssuesLoading]);
+  }, [isBoardsLoading, isIssuesLoading, boardId]);
 
   if (isBoardsLoading) return <h1>Загрузка досок...</h1>;
   if (status === "loading" ) return <h1>Загрузка...</h1>;
