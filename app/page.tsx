@@ -8,20 +8,17 @@ export default function Home() {
   const { status } = useSession();
   const [mounted, setMounted] = useState(false);
 
-  // Если пользователь уже авторизован, то мы переводим его с главной страницы на доски
   if (status === "authenticated") return redirect('/boards')
 
   useEffect(() => {
     setMounted(true);
 
-    // Принудительно устанавливаем стили для body
     document.body.style.margin = '0';
     document.body.style.padding = '0';
     document.body.style.height = '100vh';
     document.body.style.overflow = 'hidden';
 
     return () => {
-      // Очистка при размонтировании
       document.body.style.height = '';
       document.body.style.margin = '';
       document.body.style.padding = '';
@@ -32,43 +29,19 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div 
-      className="monomakh-regular"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundImage: "url('/image.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+    <div
+      className="monomakh-regular fixed top-0 left-0 w-screen h-screen bg-[url('/image.png')] bg-cover bg-center flex items-center justify-center"
     >
       <button
         onClick={() => signIn("gitlab")}
-        className="monomakh-regular"
-        style={{
-          backgroundColor: 'rgba(102, 102, 102, 0.75)',
-          color: 'white',
-          fontWeight: 'bold',
-          padding: '10px 32px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          border: '2px solid rgb(134, 134, 134)',
-          fontSize: '45px',
-          textDecoration: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          cursor: "pointer",
-        }}
+        className="monomakh-regular bg-[rgba(102,102,102,0.75)] text-white font-bold py-[10px] px-[32px] rounded-lg shadow-md border-2 border-[rgb(134,134,134)] text-[45px] no-underline flex items-center gap-2 cursor-pointer hover:bg-[rgba(102,102,102,0.85)] transition-colors"
       >
         Авторизоваться через Гитлаб
-        <img src="/gitlab-logo.png" alt="icon" style={{ width: '74px', height: '74px' }} />
+        <img
+          src="/gitlab-logo.png"
+          alt="GitLab Logo"
+          className="w-[74px] h-[74px]"
+        />
       </button>
     </div>
   );

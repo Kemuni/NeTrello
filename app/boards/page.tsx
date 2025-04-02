@@ -21,94 +21,28 @@ export default function Boards() {
 
   return (
     <div
-      className="monomakh-regular"
-      style={{
-        minHeight: '100vh',
-        backgroundImage: "url('/image3.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px'
-      }}
-    >
-      <UserProfile />
-      <Cheburator></Cheburator>
-        <div
-          style={{
-            width: '80%',
-            marginTop: '100px',
-            maxWidth: '900px',
-            backgroundColor: 'rgba(124, 124, 124, 0.6)',
-            borderRadius: '25px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: '20px',
-            rowGap: '30px',
-            padding: '20px'
-          }}
-        >
-          {repos.map((repo) => (
-            <Link
-              href={`/boards/${repo.id}`}
-              key={repo.id}
-              style={{
-                position: 'relative',
-                borderRadius: '15px',
-                overflow: 'hidden',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                width: '100%',
-                height: '150px'
-              }}
-            >
-              <img
-                src={repo.avatar_url ?? `/board${repo.id % 3 + 1}.jpg`}
-                alt={repo.name}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block'
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '10px',
-                  left: '10px',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  color: 'white',
-                  padding: '5px 10px',
-                  borderRadius: '4px'
-                }}
-              >
-                {repo.name}
-              </div>
-            </Link>
-          ))}
-
-          {/* Карточка-кнопка для добавления новых карточек */}
-          <div
-            style={{
-              position: 'relative',
-              borderRadius: '15px',
-              overflow: 'hidden',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-              width: '100%',
-              height: '150px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'rgba(255, 255, 255, 0.2)', // Прозрачный фон
-              cursor: 'pointer'
-            }}
-            onClick={() => alert('Добавить новую карточку')}
+      className="monomakh-regular min-h-screen bg-[url('/image3.png')] bg-cover bg-center flex items-center justify-center p-5">
+      <Cheburator/>
+      <div
+        className="w-[80%] mt-[100px] max-w-[900px] bg-[rgba(124,124,124,0.6)] rounded-[25px] shadow-md grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5 row-gap-[30px] p-5">
+        {repos.map((repo) => (
+          <Link
+            href={`/boards/${repo.id}`}
+            key={repo.id}
+            className="relative rounded-[15px] overflow-hidden shadow-sm w-full h-[150px] hover:scale-[1.02] transition-transform"
           >
-            <span style={{color: 'white', fontSize: '24px'}}>+</span>
-          </div>
-        </div>
+            <img
+              src={repo.avatar_url ?? `/board${repo.id % 3 + 1}.jpg`}
+              alt={repo.name}
+              className="w-full h-full object-cover block"
+            />
+            <div className="absolute top-[10px] left-[10px] bg-[rgba(0,0,0,0.5)] text-white px-[10px] py-[5px] rounded">
+              {repo.name}
+            </div>
+          </Link>
+        ))}
+        <Modal/>
       </div>
-      );
-      }
+    </div>
+  );
+}
