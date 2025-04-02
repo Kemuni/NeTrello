@@ -122,8 +122,8 @@ export const useFetchIssueBoards = () => {
 
   const fetchIssueBoards = useCallback(async (accessToken: string, projectId: number) => {
     setIsLoading(true);
-    await axiosInstance
-      .get<IssueBoard[]>(
+    try {
+      const { data } = await axiosInstance.get<IssueBoard[]>(
         `/api/v4/projects/${projectId}/boards`,
         {
           headers: {
@@ -132,77 +132,54 @@ export const useFetchIssueBoards = () => {
           },
           timeout: 20000
         }
-      )
-      .then(({ data }) => {
-        setIsLoading(false);
-        console.log(data);
-        setIssueBoards(data);
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        console.log(e);
-      });
+      );
+      setIssueBoards(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  return { issueBoards, isLoading, fetchIssueBoards}
-}
+  return { issueBoards, isLoading, fetchIssueBoards };
+};
 
 
 export const useCreateNewIssueList = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const createNewLabel = async (accessToken: string, projectId: number, title: string): Promise<number> => {
-    let labelId: number;
-    await axiosInstance
-      .post(
+    try {
+      const { data } = await axiosInstance.post(
         `/api/v4/projects/${projectId}/labels`,
-        {
-          name: title,
-          color: "#FFFFFF"
-        },
-        {
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          timeout: 20000
-        }
-      )
-      .then(({ data }) => {
-        labelId = data.id;
-      })
-    return labelId;
-  }
+        { name: title, color: "#FFFFFF" },
+        { headers: { "Authorization": `Bearer ${accessToken}` } }
+      );
+      return data.id;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
 
-  const createNewIssueList = useCallback(
-    async (accessToken: string, projectId: number, boardId: number, title: string) => {
+  const createNewIssueList = useCallback(async (accessToken: string, projectId: number, boardId: number, title: string) => {
     setIsLoading(true);
-    const labelId = await createNewLabel(accessToken, projectId, title);
-    await axiosInstance
-      .post<IssueBoard[]>(
+    try {
+      const labelId = await createNewLabel(accessToken, projectId, title);
+      await axiosInstance.post(
         `/api/v4/projects/${projectId}/boards/${boardId}/lists?label_id=${labelId}`,
         {},
-        {
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          timeout: 20000
-        }
-      )
-      .then(({ data }) => {
-        setIsLoading(false);
-        console.log(data);
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        console.log(e);
-      });
+        { headers: { "Authorization": `Bearer ${accessToken}` } }
+      );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  return { createNewIssueList, isLoading}
-}
-
+  return { createNewIssueList, isLoading };
+};
 
 export const useFetchProjectIssues = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -210,8 +187,8 @@ export const useFetchProjectIssues = () => {
 
   const fetchIssues = useCallback(async (accessToken: string, projectId: number) => {
     setIsLoading(true);
-    await axiosInstance
-      .get<Issue[]>(
+    try {
+      const { data } = await axiosInstance.get<Issue[]>(
         `/api/v4/projects/${projectId}/issues`,
         {
           headers: {
@@ -220,17 +197,58 @@ export const useFetchProjectIssues = () => {
           },
           timeout: 20000
         }
-      )
-      .then(({ data }) => {
-        setIsLoading(false);
-        console.log(data);
-        setIssues(data);
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        console.log(e);
-      });
+      );
+      setIssues(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   return { issues, isLoading, fetchIssues };
-}
+};
+
+export const useDeleteIssueList = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const deleteLabel = async (accessToken: string, projectId: number, labelName: string) => {
+    try {
+      await axiosInstance.delete(
+        `/api/v4/projects/${projectId}/labels`,
+        {
+          params: { name: labelName },
+          headers: { "Authorization": `Bearer ${accessToken}` }
+        }
+      );
+    } catch (e) {
+      console.error("Failed to delete label:", e);
+      throw e;
+    }
+  };
+
+  const deleteIssueList = useCallback(async (
+    accessToken: string,
+    projectId: number,
+    boardId: number,
+    listId: number,
+    labelName: string
+  ) => {
+    setIsLoading(true);
+    try {
+      await axiosInstance.delete(
+        `/api/v4/projects/${projectId}/boards/${boardId}/lists/${listId}`,
+        { headers: { "Authorization": `Bearer ${accessToken}` } }
+      );
+
+      await deleteLabel(accessToken, projectId, labelName);
+    } catch (e) {
+      console.error("Failed to delete issue list:", e);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { deleteIssueList, isLoading };
+};
