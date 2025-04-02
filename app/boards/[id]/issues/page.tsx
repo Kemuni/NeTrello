@@ -1,12 +1,14 @@
 "use client"; // Убедитесь, что компонент является клиентским
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 
 export default function Issue() {
   const params = useParams(); // Получаем динамические параметры маршрута
   const searchParams = useSearchParams(); // Получаем параметры запроса
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   // Получаем id из параметров маршрута
   const { id } = params;
@@ -15,9 +17,55 @@ export default function Issue() {
   const issue = searchParams.get("issue");
   const parsedIssue = issue ? JSON.parse(decodeURIComponent(issue)) : null;
 
+  const handleDeleteClick = () => {
+    setShowModal(true);
+  };
+
+  const simulateDeletion = () => {
+    setIsDeleting(true);
+    // Имитация процесса удаления (3 секунды)
+    setTimeout(() => {
+      setIsDeleting(false);
+      setShowModal(false);
+    }, 3000);
+  };
+
+
   return (
     <div className="relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
-      {/* Кнопка "Назад" с использованием id */}
+      {/* Модалка */}
+      {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+              <h3 className="text-xl font-bold mb-4 monomakh-regular">Удаление задачи</h3>
+
+              {isDeleting ? (
+                  <div className="flex flex-col items-center">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900 mb-4"></div>
+                    <p className="monomakh-regular">Удаление...</p>
+                  </div>
+              ) : (
+                  <>
+                    <p className="mb-6 monomakh-regular">Вы действительно хотите удалить эту задачу?</p>
+                    <div className="flex justify-end space-x-3">
+                      <button
+                          onClick={() => setShowModal(false)}
+                          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 monomakh-regular"
+                      > Отмена
+                      </button>
+                      <button
+                          onClick={simulateDeletion}
+                          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 monomakh-regular"
+                      >
+                        Удалить
+                      </button>
+                    </div>
+                  </>
+              )}
+            </div>
+          </div>
+      )}
+
       <Link href={`/boards/${id}`}>
         <button className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer">
           <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]" />
@@ -38,10 +86,12 @@ export default function Issue() {
               </div>
             </div>
             <div className="flex flex-row justify-between px-5 pb-4 text-white text-s">
-              <button className="w-[100px] py-1 rounded-md bg-gray-400 justify-center">Удалить</button>
+              <button onClick={handleDeleteClick} className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center"> Удалить </button>
               <div className="flex flex-row gap-7">
-                <button className="w-[100px] py-1 rounded-md bg-gray-400 justify-center">Изменить</button>
-                <button className="w-[100px] py-1 rounded-md bg-gray-400 justify-center">Завершить</button>
+                <button className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center">
+                  Изменить
+                </button>
+                <button className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center">Завершить </button>
               </div>
             </div>
           </div>
