@@ -1,6 +1,8 @@
 "use client";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
+import {useSession} from "next-auth/react";
+import {useUpdateIssue} from "../../../../../services/gitlab";
 
 interface TaskCardProps {
   id: number;
@@ -13,25 +15,28 @@ interface TaskCardProps {
   } | null;
   description: string;
   due_date: string;
+  labels?: string[];
 }
 
 export default function Edit() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { data: session } = useSession();
+  const { updateIssue, isLoading: isSaving } = useUpdateIssue();
 
   const { id } = params;
   const issue = searchParams.get("issue");
   const initialIssue = issue ? JSON.parse(decodeURIComponent(issue)) : null;
 
-  // Состояние для хранения измененных данных
   const [editedIssue, setEditedIssue] = useState<TaskCardProps>({
-    id: initialIssue?.id || 0,
+    id: initialIssue?.iid,
     title: initialIssue?.title || "",
     author: initialIssue?.author || null,
     assignee: initialIssue?.assignee || null,
     description: initialIssue?.description || "",
-    due_date: initialIssue?.due_date || ""
+    due_date: initialIssue?.due_date || "",
+    labels: initialIssue?.labels || []
   });
 
   // Обработчики изменений полей
@@ -54,21 +59,32 @@ export default function Edit() {
     setEditedIssue({...editedIssue, due_date: e.target.value});
   };
 
-  // Функция для сохранения изменений (вывод в консоль)
-  const handleSave = () => {
-    console.log("Сохраненные данные:", {
-      id: editedIssue.id,
-      title: editedIssue.title,
-      assignee: editedIssue.assignee?.name || "Не назначен",
-      description: editedIssue.description,
-      due_date: editedIssue.due_date
-    });
+  const handleSave = async () => {
+    // @ts-ignore
+    if (!session?.accessToken || !id || !editedIssue.id) {
+      router.push(`/boards/${id}`);
+      return;
+    }
 
-    // Можно добавить уведомление об успешном "сохранении"
-    alert("Данные сохранены (выведены в консоль)");
-
-    // Возврат на предыдущую страницу (по желанию)
-    // router.push(`/boards/${id}`);
+    try {
+      await updateIssue(
+        // @ts-ignore
+        session.accessToken,
+        Number(id),
+        editedIssue.id,
+        {
+          title: editedIssue.title,
+          description: editedIssue.description,
+          due_date: editedIssue.due_date,
+          // Примечание: assignee_ids требует ID пользователя
+          labels: editedIssue.labels
+        }
+      );
+      router.push(`/boards/${id}`);
+    } catch (err) {
+      console.error("Ошибка при сохранении задачи:", err);
+      alert('Ошибка при сохранении задачи')
+    }
   };
 
   // Функция для получения имени исполнителя

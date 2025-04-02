@@ -271,3 +271,41 @@ export const deleteGitLabIssue = async (accessToken: string, projectId: string |
   }
 };
 
+
+export const useUpdateIssue = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateIssue = useCallback(async (
+    accessToken: string,
+    projectId: number,
+    issueId: number,
+    updateData: {
+      title?: string;
+      description?: string;
+      due_date?: string;
+      assignee_ids?: number[];
+      labels?: string[];
+    }
+  ) => {
+    setIsLoading(true);
+    try {
+      await axiosInstance.put(
+        `/api/v4/projects/${projectId}/issues/${issueId}`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return true;
+    } catch (error) {
+      console.error("Error updating issue:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { updateIssue, isLoading };
+};
