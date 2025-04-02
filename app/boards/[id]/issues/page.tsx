@@ -40,7 +40,9 @@ export default function Issue() {
             <div className="flex flex-row justify-between px-5 pb-4 text-white text-s">
               <button className="w-[100px] py-1 rounded-md bg-gray-400 justify-center">Удалить</button>
               <div className="flex flex-row gap-7">
-                <button className="w-[100px] py-1 rounded-md bg-gray-400 justify-center">Изменить</button>
+                <Link href={`/boards/${id}/issues/edit?issue=${encodeURIComponent(issue)}`}>
+                <div className="w-[100px] py-1 rounded-md bg-gray-400 justify-center">Изменить</div>
+                </Link>
                 <button className="w-[100px] py-1 rounded-md bg-gray-400 justify-center">Завершить</button>
               </div>
             </div>
