@@ -252,3 +252,22 @@ export const useDeleteIssueList = () => {
 
   return { deleteIssueList, isLoading };
 };
+
+
+export const deleteGitLabIssue = async (accessToken: string, projectId: string | number, issueId: number) => {
+  try {
+    await axiosInstance.delete(
+      `/api/v4/projects/${projectId}/issues/${issueId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return true;
+  } catch (error) {
+    console.error("Error deleting issue:", error);
+    throw error;
+  }
+};
+
