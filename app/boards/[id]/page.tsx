@@ -203,7 +203,11 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
     setShowAddList(false);
   };
 
-  if (isBoardsLoading || status === "loading") return <h1>Загрузка...</h1>;
+  if (isBoardsLoading || status === "loading") return (
+    <div className="monomakh-regular relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
+      <h1>Загрузка...</h1>
+    </div>
+  );
 
   return (
     <div className="monomakh-regular relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
