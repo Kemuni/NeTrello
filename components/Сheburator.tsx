@@ -251,7 +251,7 @@ export default function Cheburator() {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`p-2 rounded-lg max-w-[85%] ${
+                className={`p-2 rounded-lg max-w-[85%] mt-2 ${
                   msg.role === 'user'
                     ? 'bg-blue-100 dark:bg-blue-900 ml-auto'
                     : 'bg-gray-100 dark:bg-gray-700'

@@ -7,6 +7,7 @@ import {redirect} from "next/navigation";
 import Link from "next/link";
 import Cheburator from "../../components/Сheburator";
 import UserProfile from "../../components/UserProfile";
+import Modal from "../../components/modal/modal";
 
 
 export default function Boards() {
@@ -22,6 +23,7 @@ export default function Boards() {
   return (
     <div
       className="monomakh-regular min-h-screen bg-[url('/image3.png')] bg-cover bg-center flex items-center justify-center p-5">
+      <UserProfile/>
       <Cheburator/>
       <div
         className="w-[80%] mt-[100px] max-w-[900px] bg-[rgba(124,124,124,0.6)] rounded-[25px] shadow-md grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5 row-gap-[30px] p-5">
