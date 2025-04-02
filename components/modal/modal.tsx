@@ -1,33 +1,57 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
+import {useSession} from "next-auth/react";
+import {useCreateRepository} from "../../services/gitlab";
 
 export default function Modal() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { createRepository, isLoading } = useCreateRepository();
   const [modal, setModal] = useState(false);
-  const [inputValue, setInputValue] = useState('')
-  const [selectedPrivacy, setSelectedPrivacy] = useState('public');
+  const [inputValue, setInputValue] = useState('');
+  const [selectedPrivacy, setSelectedPrivacy] = useState<'public' | 'private'>('public');
   const [initWithReadme, setInitWithReadme] = useState(false);
+  const [error, setError] = useState('');
 
   const toggleModal = () => {
     setModal(!modal);
+    setError('');
   };
 
-  const handleCreate = () => {
-    const data = {
-      boardName: inputValue,
-      privacy: selectedPrivacy,
-      initRepoWithREADME: initWithReadme
-    };
+  const handleCreate = async () => {
+    // @ts-ignore
+    if (!session?.accessToken) {
+      setError('Необходимо авторизоваться');
+      return;
+    }
 
-    console.log("Создана доска:", data);
-    toggleModal();
+    try {
+      const newRepo = await createRepository(
+        // @ts-ignore
+        session.accessToken,
+        inputValue,
+        selectedPrivacy,
+        initWithReadme
+      );
+
+      console.log("Репозиторий создан:", newRepo);
+      toggleModal();
+      setTimeout(() => router.refresh(), 3000);
+    } catch (err) {
+      console.error("Ошибка при создании репозитория:", err);
+      setError('Не удалось создать репозиторий');
+    }
   };
 
-  const isButtonDisabled = inputValue.length < 3
+  const isButtonDisabled = inputValue.length < 3 || isLoading;
 
-  if (modal) {
-    document.body.classList.add('overflow-y-hidden');
-  } else {
-    document.body.classList.remove('overflow-y-hidden');
-  }
+  useEffect(() => {
+    if (modal) {
+      document.body.classList.add('overflow-y-hidden');
+    } else {
+      document.body.classList.remove('overflow-y-hidden');
+    }
+  }, [modal]);
 
   return (
     <>
@@ -40,13 +64,9 @@ export default function Modal() {
 
       {modal && (
         <div className="fixed inset-0">
-          <div
-            className="fixed inset-0 bg-[rgba(49,49,49,0.8)]"
-            onClick={toggleModal}
-          ></div>
+          <div className="fixed inset-0 bg-[rgba(49,49,49,0.8)]" onClick={toggleModal}></div>
 
-          <div
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#f1f1f1] p-[14px_28px] rounded-sm max-w-[420px] min-w-[420px]">
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#f1f1f1] p-[14px_28px] rounded-sm max-w-[420px] min-w-[420px]">
             <div>
               <h1 className="text-center m-[5px] mb-5 text-2xl monomakh-regular">Создать доску</h1>
               <div
@@ -54,6 +74,11 @@ export default function Modal() {
                 style={{backgroundImage: "url('desk_image.png')"}}
               ></div>
             </div>
+
+            {error && (
+              <div className="text-red-500 text-center mb-4">{error}</div>
+            )}
+
             <div className="flex flex-col mt-4 gap-2">
               <h5 className="monomakh-regular">Название доски</h5>
               <input
@@ -100,18 +125,21 @@ export default function Modal() {
               />
               <span className="text-gray-900">Инициализировать репозиторий с README файлом</span>
             </div>
+
             <div className="flex flex-col mt-8 gap-2 monomakh-regular">
               <button
                 className={`w-full p-3 border border-gray-800 rounded-s ${
                   isButtonDisabled
-                    ? 'disabled:opacity-50 disabled:bg-gray-300 disabled:cursor-not-allowed'
+                    ? 'opacity-50 bg-gray-300 cursor-not-allowed'
                     : 'hover:bg-blue-200'
                 }`}
                 onClick={handleCreate}
                 disabled={isButtonDisabled}
-              >Создать
+              >
+                {isLoading ? 'Создание...' : 'Создать'}
               </button>
             </div>
+
             <button
               className="absolute top-[10px] right-[10px] px-[5px] py-[7px]"
               onClick={toggleModal}

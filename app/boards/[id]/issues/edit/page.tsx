@@ -1,21 +1,23 @@
 "use client";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
-import React, { useState } from "react";
-import {useSession} from "next-auth/react";
-import {useUpdateIssue} from "../../../../../services/gitlab";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useUpdateIssue, useFetchProjectMembers, useFetchProjectLabels } from "../../../../../services/gitlab";
 
 interface TaskCardProps {
   id: number;
   title: string;
   author?: {
     name: string;
+    id: number;
   };
   assignee?: {
     name: string;
+    id: number;
   } | null;
   description: string;
   due_date: string;
-  labels?: string[];
+  labels: string[];
 }
 
 export default function Edit() {
@@ -24,13 +26,16 @@ export default function Edit() {
   const router = useRouter();
   const { data: session } = useSession();
   const { updateIssue, isLoading: isSaving } = useUpdateIssue();
+  const { members, fetchMembers } = useFetchProjectMembers();
+  const { labels, fetchLabels } = useFetchProjectLabels();
+  const [error, setError] = useState("");
 
   const { id } = params;
   const issue = searchParams.get("issue");
   const initialIssue = issue ? JSON.parse(decodeURIComponent(issue)) : null;
 
   const [editedIssue, setEditedIssue] = useState<TaskCardProps>({
-    id: initialIssue?.iid,
+    id: initialIssue?.iid || 0,
     title: initialIssue?.title || "",
     author: initialIssue?.author || null,
     assignee: initialIssue?.assignee || null,
@@ -39,19 +44,32 @@ export default function Edit() {
     labels: initialIssue?.labels || []
   });
 
-  // Обработчики изменений полей
+  // Загрузка участников проекта и меток
+  useEffect(() => {
+    // @ts-ignore
+    if (session?.accessToken && id) {
+      // @ts-ignore
+      fetchMembers(session.accessToken, Number(id));
+      // @ts-ignore
+      fetchLabels(session.accessToken, Number(id));
+    }
+    // @ts-ignore
+  }, [session?.accessToken, id]);
+
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditedIssue({...editedIssue, title: e.target.value});
   };
 
-  const handleAssigneeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = Number(e.target.value);
+    const selectedMember = members.find(m => m.id === selectedId);
     setEditedIssue({
       ...editedIssue,
-      assignee: e.target.value ? { name: e.target.value } : null
+      assignee: selectedMember || null
     });
   };
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEditedIssue({...editedIssue, description: e.target.value});
   };
 
@@ -59,12 +77,19 @@ export default function Edit() {
     setEditedIssue({...editedIssue, due_date: e.target.value});
   };
 
+  const handleLabelsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setEditedIssue({...editedIssue, labels: selectedOptions});
+  };
+
   const handleSave = async () => {
     // @ts-ignore
     if (!session?.accessToken || !id || !editedIssue.id) {
-      router.push(`/boards/${id}`);
+      setError("Недостаточно данных для сохранения");
       return;
     }
+
+    setError("");
 
     try {
       await updateIssue(
@@ -76,26 +101,15 @@ export default function Edit() {
           title: editedIssue.title,
           description: editedIssue.description,
           due_date: editedIssue.due_date,
-          // Примечание: assignee_ids требует ID пользователя
+          assignee_ids: editedIssue.assignee ? [editedIssue.assignee.id] : [],
           labels: editedIssue.labels
         }
       );
       router.push(`/boards/${id}`);
     } catch (err) {
       console.error("Ошибка при сохранении задачи:", err);
-      alert('Ошибка при сохранении задачи')
+      setError("Не удалось сохранить изменения");
     }
-  };
-
-  // Функция для получения имени исполнителя
-  const getAssigneeName = () => {
-    if (editedIssue.assignee) {
-      return editedIssue.assignee.name;
-    }
-    if (editedIssue.author) {
-      return editedIssue.author.name;
-    }
-    return "";
   };
 
   return (
@@ -143,7 +157,8 @@ export default function Edit() {
           borderRadius: '10px',
           padding: '20px',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-          zIndex: 2
+          zIndex: 2,
+          width: '100%'
         }}>
           <h2 style={{
             color: '#333',
@@ -156,7 +171,8 @@ export default function Edit() {
               type="text"
               value={editedIssue.title}
               onChange={handleTitleChange}
-              style={{color: '#773306',
+              style={{
+                color: '#773306',
                 fontSize: '50px',
                 width: '100%',
                 border: 'none',
@@ -168,60 +184,95 @@ export default function Edit() {
             />
           </h2>
 
-          <p style={{ fontSize: '32px', marginTop: '20px' }}>
-            Задача закреплена за:
-            <br />
-            <input
-              type="text"
-              value={getAssigneeName()}
+          {error && (
+            <div style={{ color: 'red', marginBottom: '20px', textAlign: 'center' }}>
+              {error}
+            </div>
+          )}
+
+          <div style={{ fontSize: '32px', marginTop: '20px' }}>
+            <label>Задача закреплена за:</label>
+            <select
+              value={editedIssue.assignee?.id || ''}
               onChange={handleAssigneeChange}
               style={{
-                color: '#773306',
+                border: 'black solid 1px',
                 fontSize: '32px',
                 width: '100%',
-                border: 'none',
-                borderBottom: '1px solid #ccc',
-                outline: 'none'
+                padding: '5px',
+                marginTop: '10px',
+                borderRadius: '5px'
               }}
-            />
-          </p>
+            >
+              <option value="">Не назначено</option>
+              {members.map(member => (
+                <option key={member.id} value={member.id}>
+                  {member.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <p style={{ fontSize: '32px', marginTop: '20px' }}>
-            Описание задачи:
-            <br />
-            <input
-              type="text"
+          <div style={{ fontSize: '32px', marginTop: '20px' }}>
+            <label>Метки:</label>
+            <select
+              multiple
+              value={editedIssue.labels}
+              onChange={handleLabelsChange}
+              style={{
+                border: 'black solid 1px',
+                fontSize: '32px',
+                width: '100%',
+                padding: '5px',
+                marginTop: '10px',
+                borderRadius: '5px',
+                height: 'auto',
+                minHeight: '100px'
+              }}
+            >
+              {labels.map(label => (
+                <option key={label.name} value={label.name}>
+                  {label.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ fontSize: '32px', marginTop: '20px' }}>
+            <label>Описание задачи:</label>
+            <textarea
               value={editedIssue.description}
               onChange={handleDescriptionChange}
               style={{
-                color: '#773306',
+                border: 'black solid 1px',
                 fontSize: '32px',
                 width: '100%',
-                border: 'none',
-                borderBottom: '1px solid #ccc',
-                outline: 'none'
+                padding: '5px',
+                marginTop: '10px',
+                borderRadius: '5px',
+                minHeight: '100px'
               }}
             />
-          </p>
+          </div>
 
-          <p style={{ fontSize: '32px', marginTop: '20px' }}>
-            Срок выполнения:
+          <div style={{ fontSize: '32px', marginTop: '20px' }}>
+            <label>Срок выполнения:</label>
             <input
               type="date"
               value={editedIssue.due_date}
               onChange={handleDueDateChange}
               style={{
-                color: '#773306',
+                border: 'black solid 1px',
                 fontSize: '32px',
                 width: '100%',
-                border: 'none',
-                borderBottom: '1px solid #ccc',
-                outline: 'none'
+                padding: '5px',
+                marginTop: '10px',
+                borderRadius: '5px'
               }}
             />
-          </p>
+          </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '35px' }}>
             <button
               onClick={() => router.push(`/boards/${id}`)}
               style={{
@@ -230,9 +281,9 @@ export default function Edit() {
                 borderRadius: '5px',
                 padding: '10px 20px',
                 cursor: 'pointer',
-                fontSize: '23px',
-                marginTop: '35px'
+                fontSize: '23px'
               }}
+              disabled={isSaving}
             >
               Отменить
             </button>
@@ -245,11 +296,11 @@ export default function Edit() {
                 borderRadius: '5px',
                 padding: '10px 20px',
                 cursor: 'pointer',
-                fontSize: '23px',
-                marginTop: '35px'
+                fontSize: '23px'
               }}
+              disabled={isSaving}
             >
-              Сохранить
+              {isSaving ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>
         </div>

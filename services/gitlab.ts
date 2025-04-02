@@ -309,3 +309,104 @@ export const useUpdateIssue = () => {
 
   return { updateIssue, isLoading };
 };
+
+
+export interface ProjectMember {
+  id: number;
+  name: string;
+  username: string;
+}
+
+export interface ProjectLabel {
+  name: string;
+  color: string;
+}
+
+export const useFetchProjectMembers = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [members, setMembers] = useState<ProjectMember[]>([]);
+
+  const fetchMembers = useCallback(async (accessToken: string, projectId: number) => {
+    setIsLoading(true);
+    try {
+      const { data } = await axiosInstance.get<ProjectMember[]>(
+        `/api/v4/projects/${projectId}/members`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      setMembers(data);
+    } catch (error) {
+      console.error("Error fetching members:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { members, fetchMembers, isLoading };
+};
+
+export const useFetchProjectLabels = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [labels, setLabels] = useState<ProjectLabel[]>([]);
+
+  const fetchLabels = useCallback(async (accessToken: string, projectId: number) => {
+    setIsLoading(true);
+    try {
+      const { data } = await axiosInstance.get<ProjectLabel[]>(
+        `/api/v4/projects/${projectId}/labels`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      setLabels(data);
+    } catch (error) {
+      console.error("Error fetching labels:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { labels, fetchLabels, isLoading };
+};
+
+
+export const useCreateRepository = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const createRepository = useCallback(async (
+    accessToken: string,
+    name: string,
+    visibility: 'private' | 'public',
+    initializeWithReadme: boolean
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        '/api/v4/projects',
+        {
+          name,
+          visibility,
+          initialize_with_readme: initializeWithReadme
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating repository:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { createRepository, isLoading };
+};

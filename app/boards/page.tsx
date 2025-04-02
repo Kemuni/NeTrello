@@ -1,6 +1,6 @@
 'use client'
 
-import  React, {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useFetchUserRepositories} from "../../services/gitlab";
 import {useSession} from "next-auth/react";
 import {redirect} from "next/navigation";
@@ -9,24 +9,19 @@ import Cheburator from "../../components/Сheburator";
 import UserProfile from "../../components/UserProfile";
 import Modal from "../../components/modal/modal";
 
-
 export default function Boards() {
   const { data: session, status } = useSession();
   // @ts-ignore
-  if (status !== "authenticated" || session?.accessToken === undefined) redirect('/')
+  if (status !== "authenticated" || !session?.accessToken) redirect('/');
 
   // @ts-ignore
   const {repos, isLoading, error} = useFetchUserRepositories(session.accessToken);
-  console.log(repos, isLoading, error)
-
 
   return (
-    <div
-      className="monomakh-regular min-h-screen bg-[url('/image3.png')] bg-cover bg-center flex items-center justify-center p-5">
+    <div className="monomakh-regular min-h-screen bg-[url('/image3.png')] bg-cover bg-center flex items-center justify-center p-5">
       <UserProfile/>
       <Cheburator/>
-      <div
-        className="w-[80%] mt-[100px] max-w-[900px] bg-[rgba(124,124,124,0.6)] rounded-[25px] shadow-md grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5 row-gap-[30px] p-5">
+      <div className="w-[80%] mt-[100px] max-w-[900px] bg-[rgba(124,124,124,0.6)] rounded-[25px] shadow-md grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5 row-gap-[30px] p-5">
         {repos.map((repo) => (
           <Link
             href={`/boards/${repo.id}`}
@@ -43,7 +38,7 @@ export default function Boards() {
             </div>
           </Link>
         ))}
-        <Modal/>
+        <Modal />
       </div>
     </div>
   );
