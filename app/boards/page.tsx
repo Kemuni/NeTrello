@@ -5,7 +5,8 @@ import {useFetchUserRepositories} from "../../services/gitlab";
 import {useSession} from "next-auth/react";
 import {redirect} from "next/navigation";
 import Link from "next/link";
-import Cheburator from "../../components/cheburator";
+import Cheburator from "../../components/Сheburator";
+import UserProfile from "../../components/UserProfile";
 
 
 export default function Boards() {
@@ -32,6 +33,7 @@ export default function Boards() {
         padding: '20px'
       }}
     >
+      <UserProfile />
       <Cheburator></Cheburator>
         <div
           style={{

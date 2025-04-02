@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation"; // Добавляем useParams
 import UserProfile from "../../../components/UserProfile";
+import Cheburator from "../../../components/Сheburator";
 
 interface IssueListProps extends IssueList {
   issues?: Issue[];
@@ -185,8 +186,8 @@ const Board: React.FC = ({params,}: { params: { id: number }}) => {
     <div className="monomakh-regular relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
       <Link href={"/boards"} className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer">
         <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]" />
-      </Link>
-      <UserProfile></UserProfile>
+      </Link>п
+      <UserProfile />
 
       <div className="flex w-[80%] h-[80%] gap-4 overflow-x-auto">
         <ListComponent title="Открытые" issues={openedListIssues}/>
@@ -211,6 +212,7 @@ const Board: React.FC = ({params,}: { params: { id: number }}) => {
           </div>
         )}
       </div>
+      <Cheburator />
     </div>
   );
 };
