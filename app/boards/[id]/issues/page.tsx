@@ -1,23 +1,20 @@
-"use client"; // Убедитесь, что компонент является клиентским
+"use client";
 
 import React from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 
 export default function Issue() {
-  const params = useParams(); // Получаем динамические параметры маршрута
-  const searchParams = useSearchParams(); // Получаем параметры запроса
+  const params = useParams();
+  const searchParams = useSearchParams();
 
-  // Получаем id из параметров маршрута
   const { id } = params;
 
-  // Получаем данные о issue из параметров запроса и декодируем их
   const issue = searchParams.get("issue");
   const parsedIssue = issue ? JSON.parse(decodeURIComponent(issue)) : null;
 
   return (
     <div className="relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
-      {/* Кнопка "Назад" с использованием id */}
       <Link href={`/boards/${id}`}>
         <button className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer">
           <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]" />

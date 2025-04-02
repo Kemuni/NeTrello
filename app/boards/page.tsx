@@ -41,7 +41,7 @@ export default function Boards() {
             </div>
           </Link>
         ))}
-        {/*<Modal/>*/}
+        <Modal/>
       </div>
     </div>
   );

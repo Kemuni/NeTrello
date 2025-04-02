@@ -1,4 +1,4 @@
-"use client"; // Убедитесь, что компонент является клиентским
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
@@ -11,7 +11,7 @@ import {
   useFetchProjectIssues,
 } from "../../../services/gitlab";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation"; // Добавляем useParams
+import { useParams, useRouter } from "next/navigation";
 import UserProfile from "../../../components/UserProfile";
 
 interface IssueListProps extends IssueList {
@@ -20,16 +20,14 @@ interface IssueListProps extends IssueList {
 
 const Card: React.FC<{ issue: Issue }> = ({ issue }) => {
   const router = useRouter();
-  const params = useParams(); // Получаем параметры маршрута
+  const params = useParams();
 
-  // Обработчик клика для перехода на страницу /boards/[id]/issues
   const handleCardClick = () => {
     if (!params.id) {
       console.error("ID is undefined");
       return;
     }
 
-    // Кодируем данные о issue перед передачей через URL
     const encodedIssue = encodeURIComponent(JSON.stringify(issue));
     router.push(`/boards/${params.id}/issues?issue=${encodedIssue}`);
   };
@@ -38,7 +36,7 @@ const Card: React.FC<{ issue: Issue }> = ({ issue }) => {
     <div
       key={issue.id}
       className="flex justify-center items-center w-full relative cursor-pointer"
-      onClick={handleCardClick} // Добавляем обработчик клика
+      onClick={handleCardClick}
     >
       <img src="/packet.png" alt="packett" className="w-[60%]" />
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[70%] w-[50%] max-w-[400px] text-center bg-gray-300 rounded-lg shadow-md">
