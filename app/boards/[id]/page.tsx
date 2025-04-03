@@ -126,7 +126,7 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
 
     const opened: Issue[] = [];
     const closed: Issue[] = [];
-    const updatedLists = [...lists];
+    const updatedLists = lists.map(list => ({ ...list, issues: [] }));
 
     issues.forEach(issue => {
       if (issue.state === "opened") opened.push(issue);
