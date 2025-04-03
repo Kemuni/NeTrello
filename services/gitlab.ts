@@ -149,34 +149,48 @@ export const useCreateNewIssueList = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const createNewLabel = async (accessToken: string, projectId: number, title: string): Promise<number> => {
-    try {
-      const { data } = await axiosInstance.post(
+    let labelId: number;
+    await axiosInstance
+      .post(
         `/api/v4/projects/${projectId}/labels`,
-        { name: title, color: "#FFFFFF" },
-        { headers: { "Authorization": `Bearer ${accessToken}` } }
-      );
-      return data.id;
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
+        {
+          name: title,
+          color: "#FFFFFF"
+        },
+        {
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(({ data }) => {
+        labelId = data.id;
+      });
+    return labelId;
   };
 
-  const createNewIssueList = useCallback(async (accessToken: string, projectId: number, boardId: number, title: string) => {
-    setIsLoading(true);
-    try {
-      const labelId = await createNewLabel(accessToken, projectId, title);
-      await axiosInstance.post(
-        `/api/v4/projects/${projectId}/boards/${boardId}/lists?label_id=${labelId}`,
-        {},
-        { headers: { "Authorization": `Bearer ${accessToken}` } }
-      );
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const createNewIssueList = useCallback(
+    async (accessToken: string, projectId: number, boardId: number, title: string) => {
+      setIsLoading(true);
+      try {
+        const labelId = await createNewLabel(accessToken, projectId, title);
+
+        await axiosInstance.post(
+          `/api/v4/projects/${projectId}/boards/${boardId}/lists`,
+          { label_id: labelId },
+          {
+            headers: {
+              "Authorization": `Bearer ${accessToken}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Ошибка создания листа:", error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    }, []);
 
   return { createNewIssueList, isLoading };
 };
@@ -266,7 +280,7 @@ export const deleteGitLabIssue = async (accessToken: string, projectId: string |
     );
     return true;
   } catch (error) {
-    console.error("Error deleting issue:", error);
+    console.error("Ошибка удаления issue:", error);
     throw error;
   }
 };
@@ -300,7 +314,7 @@ export const useUpdateIssue = () => {
       );
       return true;
     } catch (error) {
-      console.error("Error updating issue:", error);
+      console.error("Ошибка обновления issue:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -339,7 +353,7 @@ export const useFetchProjectMembers = () => {
       );
       setMembers(data);
     } catch (error) {
-      console.error("Error fetching members:", error);
+      console.error("Ошибка получения участников:", error);
     } finally {
       setIsLoading(false);
     }
@@ -365,7 +379,7 @@ export const useFetchProjectLabels = () => {
       );
       setLabels(data);
     } catch (error) {
-      console.error("Error fetching labels:", error);
+      console.error("Ошибка получения лейблов:", error);
     } finally {
       setIsLoading(false);
     }
@@ -401,7 +415,7 @@ export const useCreateRepository = () => {
       );
       return response.data;
     } catch (error) {
-      console.error("Error creating repository:", error);
+      console.error("Ошибка создания репозитория:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -440,7 +454,7 @@ export const useCreateIssue = () => {
         }
       );
     } catch (error) {
-      console.error("Error creating issue:", error);
+      console.error("Ошибка создания issue:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -448,4 +462,61 @@ export const useCreateIssue = () => {
   }, []);
 
   return { createIssue, isLoading };
+};
+
+
+export const useCreateIssueBoard = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const createIssueBoard = useCallback(async (accessToken: string, projectId: number) => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        `/api/v4/projects/${projectId}/boards`,
+        { name: "Main Board" },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Ошибка создания issue доски:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { createIssueBoard, isLoading };
+};
+
+
+export const updateGitLabIssue = async (
+  accessToken: string,
+  projectId: string | number,
+  issueId: number,
+  updateData: {
+    state_event?: "close" | "reopen";
+    title?: string;
+    description?: string;
+    due_date?: string;
+    labels?: string;
+  }
+) => {
+  try {
+    await axiosInstance.put(
+      `/api/v4/projects/${projectId}/issues/${issueId}`,
+      updateData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error updating issue:", error);
+    throw error;
+  }
 };

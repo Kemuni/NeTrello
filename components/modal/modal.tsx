@@ -47,9 +47,8 @@ export default function Modal() {
         initWithReadme
       );
 
-      console.log("Репозиторий создан:", newRepo);
       toggleModal();
-      setTimeout(() => router.refresh(), 3000);
+      setTimeout(() => router.push('/boards'), 3000);
     } catch (err) {
       console.error("Ошибка при создании репозитория:", err);
       setError('Не удалось создать репозиторий');

@@ -8,7 +8,7 @@ import {
   Issue,
   useCreateNewIssueList,
   useFetchIssueBoards,
-  useFetchProjectIssues, useDeleteIssueList,
+  useFetchProjectIssues, useDeleteIssueList, useCreateIssueBoard,
 } from "../../../services/gitlab";
 import Link from "next/link";
 import UserProfile from "../../../components/UserProfile";
@@ -71,6 +71,7 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
   const { createNewIssueList } = useCreateNewIssueList();
   const { issues, isLoading: isIssuesLoading, fetchIssues } = useFetchProjectIssues();
   const { deleteIssueList } = useDeleteIssueList();
+  const { createIssueBoard } = useCreateIssueBoard();
 
   const [lists, setLists] = useState<IssueListProps[]>([]);
   const [openedIssues, setOpenedIssues] = useState<Issue[]>([]);
@@ -82,12 +83,26 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
     // @ts-ignore
     if (status !== "authenticated" || !session?.accessToken) return;
 
+    try {
+      // @ts-ignore
+      await fetchIssueBoards(session.accessToken, id);
+
+      if (issueBoards.length === 0) {
+        // @ts-ignore
+        const newBoard = await createIssueBoard(session.accessToken, id);
+        setBoardId(newBoard.id);
+
+        // @ts-ignore
+        await fetchIssueBoards(session.accessToken, id);
+      }
+
+      // @ts-ignore
+      await fetchIssues(session.accessToken, id);
+    } catch (error) {
+      console.error("Ошибка загрузки данных:", error);
+    }
     // @ts-ignore
-    await fetchIssueBoards(session.accessToken, id);
-    // @ts-ignore
-    await fetchIssues(session.accessToken, id);
-    // @ts-ignore
-  }, [status, session?.accessToken, id]);
+  }, [status, session?.accessToken, id, issueBoards.length]);
 
   const handleDeleteList = async (listId: number, labelName: string) => {
     // @ts-ignore
@@ -148,10 +163,23 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
     // @ts-ignore
     if (!session?.accessToken || !boardId) return;
 
-    // @ts-ignore
-    await createNewIssueList(session.accessToken, id, boardId, title);
-    loadData();
-    setShowAddList(false);
+    try {
+      // @ts-ignore
+      await createNewIssueList(session.accessToken, id, boardId, title);
+
+      // @ts-ignore
+      await fetchIssueBoards(session.accessToken, id);
+      if (issueBoards.length > 0) {
+        const board = issueBoards[0];
+        const sortedLists = [...board.lists].sort((a, b) => a.position - b.position);
+        setLists(sortedLists);
+        setBoardId(board.id);
+      }
+    } catch (error) {
+      console.error("Ошибка добавления столбца:", error);
+    } finally {
+      setShowAddList(false);
+    }
   };
 
   if (isBoardsLoading || status === "loading") return (
@@ -201,7 +229,7 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
             className="bg-[rgba(124,124,124,0.5)] w-[30%] h-[15%] rounded-2xl border-4 border-gray-300 flex flex-col items-center pt-5 cursor-pointer flex-shrink-0"
             onClick={() => setShowAddList(true)}
           >
-            <h2 className="text-4xl text-white">Добавить страницу</h2>
+            <h2 className="text-4xl text-white">Добавить столбец</h2>
           </div>
         )}
       </div>
