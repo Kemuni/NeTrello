@@ -410,3 +410,42 @@ export const useCreateRepository = () => {
 
   return { createRepository, isLoading };
 };
+
+
+export const useCreateIssue = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const createIssue = useCallback(async (
+    accessToken: string,
+    projectId: number,
+    title: string,
+    description: string,
+    dueDate: string,
+    labels: string[]
+  ) => {
+    setIsLoading(true);
+    try {
+      await axiosInstance.post(
+        `/api/v4/projects/${projectId}/issues`,
+        {
+          title,
+          description,
+          due_date: dueDate,
+          labels: labels.join(',')
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error creating issue:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { createIssue, isLoading };
+};

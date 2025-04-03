@@ -11,63 +11,14 @@ import {
   useFetchProjectIssues, useDeleteIssueList,
 } from "../../../services/gitlab";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
 import UserProfile from "../../../components/UserProfile";
 import Cheburator from "../../../components/Сheburator";
+import ListComponent from "../../../components/ListComponent";
 
 interface IssueListProps extends IssueList {
   issues?: Issue[];
 }
 
-const Card: React.FC<{ issue: Issue }> = ({ issue }) => {
-  const router = useRouter();
-  const params = useParams();
-
-  const handleCardClick = () => {
-    if (!params.id) return;
-    const encodedIssue = encodeURIComponent(JSON.stringify(issue));
-    router.push(`/boards/${params.id}/issues?issue=${encodedIssue}`);
-  };
-
-  return (
-    <div
-      key={issue.id}
-      className="flex justify-center items-center w-full relative cursor-pointer"
-      onClick={handleCardClick}
-    >
-      <img src="/packet.png" alt="packett" className="w-[60%]" />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[70%] w-[50%] max-w-[400px] text-center bg-gray-300 rounded-lg shadow-md">
-        <p className="my-2">Название: {issue.title}</p>
-        <p>Автор: {issue.author.name}</p>
-        <p>Метки: {issue.labels.join(", ")}</p>
-      </div>
-    </div>
-  );
-};
-
-const ListComponent: React.FC<{
-  title: string;
-  issues: Issue[];
-  onDelete?: () => void;
-}> = ({ title, issues, onDelete }) => {
-  return (
-    <div className="bg-[rgba(124,124,124,0.5)] w-[30%] h-full rounded-2xl border-4 border-gray-300 flex flex-col items-center pt-5 flex-shrink-0 overflow-y-auto no-scrollbar">
-      <div className="flex items-center gap-2">
-        <h2 className="text-5xl text-white">{title}</h2>
-        {onDelete && (
-          <button
-            onClick={onDelete}
-            className="text-red-500 bg-white rounded-full w-8 h-8 flex items-center justify-center text-2xl font-bold hover:cursor-pointer"
-            title="Удалить столбец"
-          >
-            ×
-          </button>
-        )}
-      </div>
-      {issues?.map((i) => <Card key={i.id} issue={i} />)}
-    </div>
-  );
-};
 
 const AddList: React.FC<{ onCancel: () => void; onAdd: (title: string) => void }> = ({ onCancel, onAdd }) => {
   const [inputValue, setInputValue] = useState('');
@@ -217,17 +168,28 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
       <UserProfile />
 
       <div className="flex w-[80%] h-[80%] gap-4 overflow-x-auto">
-        <ListComponent title="Открытые" issues={openedIssues} />
-        <ListComponent title="Закрытые" issues={closedIssues} />
-
         {lists.map((list) => (
           <ListComponent
             key={list.id}
             title={list.label.name}
             issues={list.issues || []}
             onDelete={() => handleDeleteList(list.id, list.label.name)}
+            boardId={id.toString()}
+            listLabel={list.label.name}
           />
         ))}
+
+        <ListComponent
+          title="Открытые"
+          issues={openedIssues}
+          boardId={id.toString()}
+        />
+        <ListComponent
+          title="Закрытые"
+          issues={closedIssues}
+          boardId={id.toString()}
+        />
+
 
         {showAddList ? (
           <AddList
