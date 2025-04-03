@@ -41,14 +41,12 @@ export default function Cheburator() {
   // Обработка анимации открытия/закрытия
   const handleToggleDialog = () => {
     if (isDialogOpened) {
-      // Если диалог открыт, начинаем анимацию закрытия
       setIsAnimating(true);
       setTimeout(() => {
         setIsDialogOpened(false);
         setIsAnimating(false);
-      }, 300); // Время должно совпадать с длительностью CSS-перехода
+      }, 300);
     } else {
-      // Если диалог закрыт, сначала анимируем исчезновение иконки, затем показываем диалог
       setIsAnimating(true);
       setTimeout(() => {
         setIsDialogOpened(true);

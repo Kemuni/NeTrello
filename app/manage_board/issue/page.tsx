@@ -94,7 +94,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, assignee, description, dueDa
 };
 
 const Page: React.FC = () => {
-    // Пример данных, получаем из GitLab
     const taskData = {
         title: "Название задачи",
         assignee: "Сударь Дмитрий",

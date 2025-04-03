@@ -8,13 +8,26 @@ export default function Modal() {
   const router = useRouter();
   const { createRepository, isLoading } = useCreateRepository();
   const [modal, setModal] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [selectedPrivacy, setSelectedPrivacy] = useState<'public' | 'private'>('public');
   const [initWithReadme, setInitWithReadme] = useState(false);
   const [error, setError] = useState('');
 
   const toggleModal = () => {
-    setModal(!modal);
+    if (modal) {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setModal(false);
+        setIsAnimating(false);
+      }, 300);
+    } else {
+      setModal(true);
+      setIsAnimating(true);
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 50);
+    }
     setError('');
   };
 
@@ -64,9 +77,25 @@ export default function Modal() {
 
       {modal && (
         <div className="fixed inset-0">
-          <div className="fixed inset-0 bg-[rgba(49,49,49,0.8)]" onClick={toggleModal}></div>
+          <div 
+            className="fixed inset-0 bg-[rgba(49,49,49,0.8)]" 
+            onClick={toggleModal}
+            style={{
+              opacity: isAnimating ? 0 : 1,
+              transition: 'opacity 0.3s ease',
+            }}
+          ></div>
 
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#f1f1f1] p-[14px_28px] rounded-sm max-w-[420px] min-w-[420px]">
+          <div 
+            className="fixed top-1/2 left-1/2 bg-[#f1f1f1] p-[14px_28px] rounded-sm max-w-[420px] min-w-[420px]"
+            style={{
+              opacity: isAnimating ? 0 : 1,
+              transform: isAnimating 
+                ? 'translate(-50%, -50%) scale(0.9)' 
+                : 'translate(-50%, -50%) scale(1)',
+              transition: 'opacity 0.3s ease, transform 0.3s ease',
+            }}
+          >
             <div>
               <h1 className="text-center m-[5px] mb-5 text-2xl monomakh-regular">Создать доску</h1>
               <div

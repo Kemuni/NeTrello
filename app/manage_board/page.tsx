@@ -8,7 +8,7 @@ type Page = {
   title: string;
 };
 
-// Компонент для страницы (например, "Открытые", "Закрытые" или созданные страницы)
+
 const PageComponent: React.FC<{ title: string }> = ({ title }) => {
   return (
     <div className="bg-[rgba(124,124,124,0.5)] w-[30%] h-full rounded-2xl border-4 border-gray-300 flex flex-col items-center pt-5 flex-shrink-0">
@@ -33,12 +33,11 @@ const Card: React.FC = () => {
 
 // Компонент для добавления новой страницы
 const AddPage: React.FC<{ onCancel: () => void; onAdd: (title: string) => void }> = ({ onCancel, onAdd }) => {
-  const [inputValue, setInputValue] = useState(''); // Состояние для значения поля ввода
-
+  const [inputValue, setInputValue] = useState(''); 
   const handleAdd = () => {
-    if (inputValue.trim()) { // Проверяем, что поле не пустое
-      onAdd(inputValue); // Вызываем onAdd с названием страницы
-      setInputValue(''); // Очищаем поле ввода
+    if (inputValue.trim()) {
+      onAdd(inputValue); 
+      setInputValue(''); 
     }
   };
 
@@ -51,7 +50,7 @@ const AddPage: React.FC<{ onCancel: () => void; onAdd: (title: string) => void }
             type="text"
             placeholder="Введите название"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)} // Обновляем состояние
+            onChange={(e) => setInputValue(e.target.value)} 
             className="w-full py-2 px-5 border border-white rounded-xl focus:outline-none focus:ring-1 focus:ring-white text-white bg-[rgba(124,124,124,0.5)]"
           />
         </div>
@@ -60,14 +59,14 @@ const AddPage: React.FC<{ onCancel: () => void; onAdd: (title: string) => void }
         {/* Кнопка "Добавить" */}
         <button
           className="w-[120px] py-1.5 border border-white rounded-md bg-gray-400 justify-center"
-          onClick={handleAdd} // Вызываем handleAdd при нажатии
+          onClick={handleAdd} 
         >
           Добавить
         </button>
         {/* Кнопка "Отмена" */}
         <button
           className="w-[120px] py-1.5 border border-white rounded-md bg-gray-400 justify-center"
-          onClick={onCancel} // Вызываем onCancel при нажатии
+          onClick={onCancel} 
         >
           Отмена
         </button>
@@ -77,17 +76,17 @@ const AddPage: React.FC<{ onCancel: () => void; onAdd: (title: string) => void }
 };
 
 const NewPage: React.FC = () => {
-  const [showAddPage, setShowAddPage] = useState(false); // Состояние для отображения AddPage
-  const [pages, setPages] = useState<Page[]>([]); // Состояние для хранения созданных страниц
+  const [showAddPage, setShowAddPage] = useState(false); 
+  const [pages, setPages] = useState<Page[]>([]); 
 
-  // Функция для добавления новой страницы
+  // добавление новой страницы
   const handleAddPage = (title: string) => {
     const newPage: Page = {
-      id: Date.now().toString(), // Уникальный id (можно использовать uuid)
-      title, // Название страницы
+      id: Date.now().toString(), 
+      title, 
     };
-    setPages([...pages, newPage]); // Добавляем новую страницу в массив
-    setShowAddPage(false); // Скрываем AddPage
+    setPages([...pages, newPage]); 
+    setShowAddPage(false); 
   };
 
   return (
@@ -112,13 +111,13 @@ const NewPage: React.FC = () => {
         {/* Отображение AddPage или кнопки "Добавить страницу" */}
         {showAddPage ? (
           <AddPage
-            onCancel={() => setShowAddPage(false)} // Передаём функцию onCancel
-            onAdd={handleAddPage} // Передаём функцию handleAddPage
+            onCancel={() => setShowAddPage(false)} 
+            onAdd={handleAddPage} 
           />
         ) : (
           <div
             className="bg-[rgba(124,124,124,0.5)] w-[30%] h-[15%] rounded-2xl border-4 border-gray-300 flex flex-col items-center pt-5 cursor-pointer flex-shrink-0"
-            onClick={() => setShowAddPage(true)} // Показываем AddPage при клике
+            onClick={() => setShowAddPage(true)} 
           >
             <h2 className="text-4xl text-white">Добавить страницу</h2>
           </div>
