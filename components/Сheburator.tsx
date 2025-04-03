@@ -12,6 +12,7 @@ interface Message {
 
 export default function Cheburator() {
   const [isDialogOpened, setIsDialogOpened] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [message, setMessage] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +37,27 @@ export default function Cheburator() {
       localStorage.setItem('chatMessages', JSON.stringify(messages));
     }
   }, [messages]);
+
+  // Обработка анимации открытия/закрытия
+  const handleToggleDialog = () => {
+    if (isDialogOpened) {
+      // Если диалог открыт, начинаем анимацию закрытия
+      setIsAnimating(true);
+      setTimeout(() => {
+        setIsDialogOpened(false);
+        setIsAnimating(false);
+      }, 300); // Время должно совпадать с длительностью CSS-перехода
+    } else {
+      // Если диалог закрыт, сначала анимируем исчезновение иконки, затем показываем диалог
+      setIsAnimating(true);
+      setTimeout(() => {
+        setIsDialogOpened(true);
+        setTimeout(() => {
+          setIsAnimating(false);
+        }, 50);
+      }, 200);
+    }
+  };
 
   // Получаем токен доступа
   const getAccessToken = async () => {
@@ -218,6 +240,9 @@ export default function Cheburator() {
             flexDirection: 'column',
             boxSizing: 'border-box',
             zIndex: 1000,
+            opacity: isAnimating ? 0 : 1,
+            transform: isAnimating ? 'translateY(20px)' : 'translateY(0)',
+            transition: 'opacity 0.3s ease, transform 0.3s ease',
           }}
         >
           <div
@@ -234,7 +259,7 @@ export default function Cheburator() {
               src="/chepukh.png"
               alt="close-icon"
               style={{ width: '60px', height: '60px', cursor: 'pointer' }}
-              onClick={() => setIsDialogOpened(false)}
+              onClick={handleToggleDialog}
             />
           </div>
 
@@ -318,8 +343,11 @@ export default function Cheburator() {
             height: '150px',
             cursor: 'pointer',
             zIndex: 999,
+            opacity: isAnimating ? 0 : 1,
+            transform: isAnimating ? 'scale(0.8)' : 'scale(1)',
+            transition: 'opacity 0.3s ease, transform 0.3s ease',
           }}
-          onClick={() => setIsDialogOpened(true)}
+          onClick={handleToggleDialog}
         />
       )}
     </div>
