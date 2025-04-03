@@ -95,13 +95,13 @@ const AddList: React.FC<{ onCancel: () => void; onAdd: (title: string) => void }
       </div>
       <div className="flex flex-row text-white place-content-around w-full pb-5 text-xl">
         <button
-          className="w-[120px] py-1.5 border border-white rounded-md bg-gray-400 justify-center"
+          className="w-[120px] py-1.5 border border-white rounded-md bg-gray-400 justify-center hover:cursor-pointer hover:bg-gray-500"
           onClick={handleAdd}
         >
           Добавить
         </button>
         <button
-          className="w-[120px] py-1.5 border border-white rounded-md bg-gray-400 justify-center"
+          className="w-[120px] py-1.5 border border-white rounded-md bg-gray-400 justify-center hover:cursor-pointer hover:bg-gray-500"
           onClick={onCancel}
         >
           Отмена
@@ -211,8 +211,8 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
 
   return (
     <div className="monomakh-regular relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
-      <Link href="/boards" className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer">
-        <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]" />
+      <Link href="/boards" className="absolute top-[10px] left-[10px] w-18 h-18 bg-red-500 text-white border-none rounded-full cursor-pointer">
+        <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[94%]" />
       </Link>
       <UserProfile />
 

@@ -66,12 +66,12 @@ export default function Issue() {
                 <div className="flex justify-end space-x-3">
                   <button
                     onClick={() => setShowModal(false)}
-                    className="text-white w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular"
+                    className="text-white w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular hover:cursor-pointer"
                   > Отмена
                   </button>
                   <button
                     onClick={handleDeleteIssue}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 monomakh-regular"
+                    className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800 monomakh-regular hover:cursor-pointer"
                   >
                     Удалить
                   </button>
@@ -84,8 +84,8 @@ export default function Issue() {
 
       <Link href={`/boards/${id}`}>
         <button
-          className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer">
-          <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]"/>
+          className="absolute top-[10px] left-[10px] w-18 h-18 bg-red-500 text-white border-none rounded-full cursor-pointer">
+          <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[94%]"/>
         </button>
       </Link>
 
@@ -106,17 +106,17 @@ export default function Issue() {
             </div>
             <div className="flex flex-row justify-between px-5 pb-4 text-white text-s">
               <button onClick={handleDeleteClick}
-                      className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular"> Удалить
+                      className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular hover:cursor-pointer"> Удалить
               </button>
               <div className="flex flex-row gap-7">
                 <Link href={`/boards/${id}/issues/edit?issue=${encodeURIComponent(issue)}`}>
                   <button
-                    className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular">
+                    className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular hover:cursor-pointer">
                     Изменить
                   </button>
                 </Link>
                 <button
-                  className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular">Завершить
+                  className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular hover:cursor-pointer">Завершить
                 </button>
               </div>
             </div>
