@@ -17,7 +17,6 @@ export default function Cheburator() {
   const [accessToken, setAccessToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => {
-    // Загружаем сообщения из localStorage при инициализации
     if (typeof window !== 'undefined') {
       const savedMessages = localStorage.getItem('chatMessages');
       if (savedMessages) {
@@ -31,14 +30,12 @@ export default function Cheburator() {
     }];
   });
 
-  // Сохраняем сообщения в localStorage при их изменении
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('chatMessages', JSON.stringify(messages));
     }
   }, [messages]);
 
-  // Обработка анимации открытия/закрытия
   const handleToggleDialog = () => {
     if (isDialogOpened) {
       setIsAnimating(true);
@@ -57,26 +54,16 @@ export default function Cheburator() {
     }
   };
 
-  // Получаем токен доступа
   const getAccessToken = async () => {
     try {
       setIsLoading(true);
-
       const response = await fetch('/api/gigachat/token');
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`Ошибка получения токена: ${errorData.error || response.status}`);
       }
-
       const data = await response.json();
-      console.log('Получен токен доступа:', data);
-
       setAccessToken(data.access_token);
-
-      const expiresAt = new Date(data.expires_at);
-      console.log('Токен действителен до:', expiresAt);
-
     } catch (error) {
       console.error('Ошибка при получении токена:', error);
     } finally {
@@ -87,19 +74,10 @@ export default function Cheburator() {
   const sendMessageToGigaChat = async (userMessage: string) => {
     try {
       setIsLoading(true);
-
-      console.log('Отправляем сообщение в API:', {
-        message: userMessage,
-        timestamp: new Date().toISOString(),
-        token: accessToken ? 'Токен присутствует' : 'Токен отсутствует'
-      });
-
       const messageHistory = messages.map(msg => {
-        // Конвертируем timestamp в unix timestamp (секунды)
         const created_at = Math.floor(new Date(
           msg.created_at || Date.now()
         ).getTime() / 1000);
-
         return {
           role: msg.role,
           content: msg.content,
@@ -116,7 +94,6 @@ export default function Cheburator() {
         attachments: []
       });
 
-      // Формируем финальный массив сообщений + системным промпт
       const finalMessages = [
         {
           role: 'system',
@@ -124,8 +101,6 @@ export default function Cheburator() {
         },
         ...messageHistory
       ];
-
-      console.log('Отправляем историю сообщений:', finalMessages);
 
       const response = await fetch('/api/gigachat/chat', {
         method: 'POST',
@@ -146,13 +121,11 @@ export default function Cheburator() {
       }
 
       const data = await response.json();
-      console.log('Ответ от GigaChat API:', data);
-
       const assistantMessage = data.choices[0]?.message;
       const assistantResponse = assistantMessage?.content || 'Извините, я не смог сгенерировать ответ';
 
       const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const created_at = Math.floor(Date.now() / 1000); // Unix timestamp в секундах
+      const created_at = Math.floor(Date.now() / 1000);
 
       setMessages(prev => [...prev, {
         content: assistantResponse,
@@ -164,7 +137,6 @@ export default function Cheburator() {
 
     } catch (error) {
       console.error('Ошибка при общении с GigaChat API:', error);
-
       const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const created_at = Math.floor(Date.now() / 1000);
 
@@ -182,11 +154,9 @@ export default function Cheburator() {
 
   useEffect(() => {
     getAccessToken();
-
     const tokenRefreshInterval = setInterval(() => {
       getAccessToken();
     }, 25 * 60 * 1000);
-
     return () => clearInterval(tokenRefreshInterval);
   }, []);
 
@@ -216,61 +186,36 @@ export default function Cheburator() {
     };
 
     setMessages(prev => [...prev, userMessage]);
-
     setMessage('');
-
     await sendMessageToGigaChat(message);
   };
 
   return (
-    <div style={{position: 'relative', minHeight: '100vh'}}>
+    <div className="relative min-h-screen">
       {isDialogOpened && (
         <div
-          style={{
-            position: 'fixed',
-            left: '10px',
-            bottom: '20px',
-            width: '36.5vh',
-            height: '90vh',
-            borderRadius: '10px',
-            backgroundColor: 'rgba(126, 126, 126, 0.7)',
-            display: 'flex',
-            flexDirection: 'column',
-            boxSizing: 'border-box',
-            zIndex: 1000,
-            opacity: isAnimating ? 0 : 1,
-            transform: isAnimating ? 'translateY(20px)' : 'translateY(0)',
-            transition: 'opacity 0.3s ease, transform 0.3s ease',
-          }}
+          className={`fixed left-2.5 bottom-5 w-[36.5vh] h-[90vh] rounded-lg bg-gray-500/70 flex flex-col box-border z-[1000] ${
+            isAnimating ? 'opacity-0 translate-y-5' : 'opacity-100 translate-y-0'
+          } transition-all duration-300 ease-in-out`}
         >
-          <div
-            style={{
-              position: 'relative',
-              padding: '10px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <h1 style={{ fontSize: '5vh', margin: 0 }}>Чебуратор</h1>
-            <img
-              src="/chepukh.png"
-              alt="close-icon"
-              style={{ width: '60px', height: '60px', cursor: 'pointer' }}
+          <div className="relative p-2.5 flex justify-between items-center">
+            <div className="flex flex-row">
+              <h1 className="text-[5vh] m-0">Чебуратор</h1>
+              <img
+                src="/chepukh.png"
+                alt="cheburashka-icon"
+                className="w-[60px] h-[60px]"
+              />
+            </div>
+            <button
+              className="absolute top-[10px] right-[10px] px-[5px] py-[7px]"
               onClick={handleToggleDialog}
-            />
+            >
+              <img src="/addition.png" alt="icon" className="w-8 h-8 rotate-45"/>
+            </button>
           </div>
 
-          {/* Окно сообщений */}
-          <div
-            style={{
-              flex: 1,
-              padding: '10px',
-              overflowY: 'auto',
-              backgroundColor: 'rgba(30, 30, 30, 0.7)',
-              boxSizing: 'border-box',
-            }}
-          >
+          <div className="flex-1 p-2.5 overflow-y-auto bg-gray-800/70 box-border">
             {messages.map((msg, index) => (
               <div
                 key={index}
@@ -286,14 +231,7 @@ export default function Cheburator() {
             ))}
           </div>
 
-          <div
-            style={{
-              padding: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-            }}
-          >
+          <div className="p-2.5 flex items-center border-t border-white/20">
             <input
               type="text"
               value={message}
@@ -301,25 +239,10 @@ export default function Cheburator() {
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Введите сообщение..."
               disabled={isLoading}
-              style={{
-                color: 'white',
-                flex: 1,
-                padding: '10px',
-                borderRadius: '10px',
-                border: 'none',
-                fontSize: '16px',
-                outline: 'none',
-              }}
+              className="text-white flex-1 p-2.5 rounded-lg border-none text-base outline-none"
             />
             <button
-              style={{
-                marginLeft: '10px',
-                padding: '10px',
-                borderRadius: '10px',
-                backgroundColor: 'white',
-                fontSize: '16px',
-                cursor: 'pointer',
-              }}
+              className="ml-2.5 p-2.5 rounded-lg bg-white text-base cursor-pointer"
               onClick={handleSendMessage}
               disabled={isLoading || !message.trim()}
             >
@@ -333,18 +256,9 @@ export default function Cheburator() {
         <img
           src="/chepukh.png"
           alt="open-icon"
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            left: '20px',
-            width: '150px',
-            height: '150px',
-            cursor: 'pointer',
-            zIndex: 999,
-            opacity: isAnimating ? 0 : 1,
-            transform: isAnimating ? 'scale(0.8)' : 'scale(1)',
-            transition: 'opacity 0.3s ease, transform 0.3s ease',
-          }}
+          className={`fixed bottom-5 left-5 w-[150px] h-[150px] cursor-pointer z-[999] ${
+            isAnimating ? 'opacity-0 scale-80' : 'opacity-100 scale-100'
+          } transition-all duration-300 ease-in-out`}
           onClick={handleToggleDialog}
         />
       )}
