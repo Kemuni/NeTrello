@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface TaskCardProps {
     title: string;
@@ -9,6 +9,15 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ title, assignee, description, dueDate }) => {
+    const [isAnimating, setIsAnimating] = useState(true);
+
+    useEffect(() => {
+
+        setTimeout(() => {
+            setIsAnimating(false);
+        }, 50);
+    }, []);
+
     return (
         <div style={{
             position: 'relative',
@@ -29,16 +38,22 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, assignee, description, dueDa
                 width: 'calc(100% + 40px)',
                 height: 'calc(100% + 40px)',
                 zIndex: 1,
-                borderRadius: '10px'
+                borderRadius: '10px',
+                opacity: isAnimating ? 0 : 1,
+                transform: isAnimating ? 'scale(0.95)' : 'scale(1)',
+                transition: 'opacity 0.5s ease, transform 0.5s ease',
             }} />
-                        <div style={{
+            <div style={{
                 position: 'relative',
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 border: '2px solid #ccc',
                 borderRadius: '10px',
                 padding: '20px',
                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                zIndex: 2
+                zIndex: 2,
+                opacity: isAnimating ? 0 : 1,
+                transform: isAnimating ? 'translateY(20px)' : 'translateY(0)',
+                transition: 'opacity 0.5s ease, transform 0.5s ease',
             }}>
             <h2 style={{ color: '#333', fontSize: '50px', fontWeight: 'bold', textAlign: 'center', marginBottom: '20px' }}>{title}</h2>
             <p style={{ fontSize: '32px', marginTop: '20px' }}>Задача закреплена за:
@@ -108,7 +123,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, assignee, description, dueDa
 };
 
 const Page: React.FC = () => {
-    // Пример данных, которые вы можете получить из GitLab
+    
     const taskData = {
         title: "Название задачи",
         assignee: "Сударь Дмитрий",
