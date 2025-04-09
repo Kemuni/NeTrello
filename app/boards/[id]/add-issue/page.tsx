@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useCreateIssue } from "../../../../services/gitlab";
 
 export default function AddIssuePage() {
@@ -56,77 +55,187 @@ export default function AddIssuePage() {
   };
 
   return (
-    <div className="monomakh-relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
-      <Link
-        href={`/boards/${id}`}
-        className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer"
-      >
-        <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]" />
-      </Link>
+    <div style={{
+      position: 'relative',
+      backgroundImage: "url('/imagege.jpg')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      width: '100%',
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
+      <div style={{
+        position: 'relative',
+        width: '60%',
+        margin: '20px auto',
+        fontFamily: 'Monomakh, sans-serif',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+      }}>
+        <img
+          src="/packet.png"
+          alt="packett"
+          style={{
+            position: 'absolute',
+            top: '-20px',
+            left: '-20px',
+            right: '-20px',
+            bottom: '-20px',
+            width: 'calc(100% + 40px)',
+            height: 'calc(100% + 40px)',
+            zIndex: 1,
+            borderRadius: '10px'
+          }}
+        />
+        <div style={{
+          position: 'relative',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          border: '2px solid #ccc',
+          borderRadius: '10px',
+          padding: '20px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+          zIndex: 2,
+          width: '100%'
+        }}>
+          <button
+            onClick={() => router.push(`/boards/${id}`)}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              left: '10px',
+              backgroundColor: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '24px',
+              zIndex: 3
+            }}
+          >
+            <img src="/arrow-left.png" alt="arrow-left" style={{ width: '30px', height: '30px' }} />
+          </button>
 
-      <div className="bg-gray-100 border p-8 rounded-lg shadow-lg w-[80%] max-w-2xl">
-        <h1 className="text-3xl font-bold mb-6 text-center">Создать новую задачу</h1>
+          <h2 style={{
+            color: '#333',
+            fontSize: '50px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: '20px'
+          }}>
+            Создать новую задачу
+          </h2>
 
-        {error && <div className="text-red-500 mb-4 text-center">{error}</div>}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-lg mb-2">Название:</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg mb-2">Описание:</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded min-h-[100px]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg mb-2">Срок выполнения:</label>
-            <input
-              type="date"
-              name="due_date"
-              value={formData.due_date}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          {listLabel && (
-            <div className="bg-gray-100 p-3 rounded">
-              <p className="text-lg">Задача будет добавлена в колонку: <span className="font-bold">{listLabel}</span></p>
+          {error && (
+            <div style={{ color: 'red', marginBottom: '20px', textAlign: 'center' }}>
+              {error}
             </div>
           )}
 
-          <div className="flex justify-between pt-4">
-            <button
-              type="button"
-              onClick={() => router.push(`/boards/${id}`)}
-              className="px-6 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              disabled={isLoading}
-            >
-              Отмена
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-blue-300"
-              disabled={isLoading}
-            >
-              {isLoading ? "Создание..." : "Создать задачу"}
-            </button>
-          </div>
-        </form>
+          <form onSubmit={handleSubmit}>
+            <div style={{ fontSize: '32px', marginTop: '20px' }}>
+              <label>Название:</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+                style={{
+                  border: 'black solid 1px',
+                  fontSize: '32px',
+                  width: '100%',
+                  padding: '5px',
+                  marginTop: '10px',
+                  borderRadius: '5px'
+                }}
+              />
+            </div>
+
+            <div style={{ fontSize: '32px', marginTop: '20px' }}>
+              <label>Описание задачи:</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                style={{
+                  border: 'black solid 1px',
+                  fontSize: '32px',
+                  width: '100%',
+                  padding: '5px',
+                  marginTop: '10px',
+                  borderRadius: '5px',
+                  minHeight: '100px'
+                }}
+              />
+            </div>
+
+            <div style={{ fontSize: '32px', marginTop: '20px' }}>
+              <label>Срок выполнения:</label>
+              <input
+                type="date"
+                name="due_date"
+                value={formData.due_date}
+                onChange={handleChange}
+                style={{
+                  border: 'black solid 1px',
+                  fontSize: '32px',
+                  width: '100%',
+                  padding: '5px',
+                  marginTop: '10px',
+                  borderRadius: '5px'
+                }}
+              />
+            </div>
+
+            {listLabel && (
+              <div style={{ 
+                fontSize: '32px', 
+                marginTop: '20px', 
+                backgroundColor: 'rgba(240, 240, 240, 0.7)', 
+                padding: '10px', 
+                borderRadius: '5px' 
+              }}>
+                <p>Задача будет добавлена в колонку: <span style={{ fontWeight: 'bold' }}>{listLabel}</span></p>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '35px' }}>
+              <button
+                type="button"
+                onClick={() => router.push(`/boards/${id}`)}
+                style={{
+                  backgroundColor: '#ddd',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '10px 20px',
+                  cursor: 'pointer',
+                  fontSize: '23px'
+                }}
+                disabled={isLoading}
+              >
+                Отмена
+              </button>
+              <button
+                type="submit"
+                style={{
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '10px 20px',
+                  cursor: 'pointer',
+                  fontSize: '23px'
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Создание...' : 'Создать задачу'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
