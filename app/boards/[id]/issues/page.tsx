@@ -118,7 +118,7 @@ export default function Issue() {
                   </button>
                   <button
                     onClick={handleConfirm}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 monomakh-regular"
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 monomakh-regular"
                   >
                     {modalType === "delete" ? "Удалить" : "Завершить"}
                   </button>
@@ -130,8 +130,8 @@ export default function Issue() {
       )}
 
       <Link href={`/boards/${id}`}>
-        <button className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer">
-          <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]"/>
+        <button className="absolute top-[10px] left-[10px] w-30 h-30 text-white border-none rounded-full cursor-pointer" title="Сюда нажмешь - назад попадешь">
+          <img src="/rock_back.png" alt="rock_back" className="w-full h-full "/>
         </button>
       </Link>
 
@@ -159,21 +159,21 @@ export default function Issue() {
             <div className="flex flex-row justify-between px-5 pb-4 text-white text-s">
               <button
                 onClick={handleDeleteClick}
-                className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular"
+                className="w-[100px] py-1 bg-gray-500 hover:bg-gray-600 border border-white rounded-md cursor-pointer monomakh-regular "
               >
                 Удалить
               </button>
               <div className="flex flex-row gap-7">
                 <Link href={`/boards/${id}/issues/edit?issue=${encodeURIComponent(issue)}`}>
                   <button
-                    className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular">
+                    className="w-[100px] py-1 bg-gray-500 hover:bg-gray-600 border border-white rounded-md cursor-pointer justify-center monomakh-regular">
                     Изменить
                   </button>
                 </Link>
                 {parsedIssue?.state !== "closed" && (
                   <button
                     onClick={handleCloseClick}
-                    className="w-[100px] py-1 rounded-md bg-gray-400 hover:bg-gray-500 justify-center monomakh-regular"
+                    className="w-[100px] py-1 bg-gray-500 hover:bg-gray-600 border border-white rounded-md cursor-pointer justify-center monomakh-regular"
                   >
                     Завершить
                   </button>

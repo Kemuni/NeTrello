@@ -275,10 +275,8 @@ export default function Edit() {
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '35px' }}>
             <button
               onClick={() => router.push(`/boards/${id}`)}
+              className="bg-gray-400 hover:bg-gray-500 border border-white rounded-md"
               style={{
-                backgroundColor: '#ddd',
-                border: 'none',
-                borderRadius: '5px',
                 padding: '10px 20px',
                 cursor: 'pointer',
                 fontSize: '23px'
@@ -289,11 +287,9 @@ export default function Edit() {
             </button>
             <button
               onClick={handleSave}
+              className="bg-green-700 hover:bg-green-800 border border-gray rounded-md"
               style={{
-                backgroundColor: '#4CAF50',
                 color: 'white',
-                border: 'none',
-                borderRadius: '5px',
                 padding: '10px 20px',
                 cursor: 'pointer',
                 fontSize: '23px'

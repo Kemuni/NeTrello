@@ -40,19 +40,21 @@ const AddList: React.FC<{ onCancel: () => void; onAdd: (title: string) => void }
             placeholder="Введите название"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="w-full py-2 px-5 border border-white rounded-xl focus:outline-none focus:ring-1 focus:ring-white text-white bg-[rgba(124,124,124,0.5)]"
+            className="w-full py-2 px-5 border border-white rounded-md focus:outline-none focus:ring-1 focus:ring-white text-white bg-gray-500"
           />
         </div>
       </div>
       <div className="flex flex-row text-white place-content-around w-full pb-5 text-xl">
         <button
-          className="w-[120px] py-1.5 border border-white rounded-md bg-gray-400 justify-center"
+          className="w-[120px] py-1.5 border border-white rounded-md bg-gray-500 hover:bg-gray-600
+ justify-center cursor-pointer"
           onClick={handleAdd}
         >
           Добавить
         </button>
         <button
-          className="w-[120px] py-1.5 border border-white rounded-md bg-gray-400 justify-center"
+          className="w-[120px] py-1.5 border border-white rounded-md bg-gray-500 hover:bg-gray-600
+ justify-center cursor-pointer"
           onClick={onCancel}
         >
           Отмена
@@ -183,15 +185,16 @@ const Board: React.FC<{ params: { id: number } }> = ({ params }) => {
   };
 
   if (isBoardsLoading || status === "loading") return (
-    <div className="monomakh-regular relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
-      <h1>Загрузка...</h1>
-    </div>
+      <div className="monomakh-regular relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex flex-col justify-center items-center gap-4">
+        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+        <h1 className="text-2xl animate-pulse">ЗАГРУЗКА...</h1>
+      </div>
   );
 
   return (
     <div className="monomakh-regular relative bg-cover bg-[url('/background-manage.jpg')] h-screen flex justify-center items-center">
-      <Link href="/boards" className="absolute top-[10px] left-[10px] w-20 h-20 bg-red-500 text-white border-none rounded-full cursor-pointer">
-        <img src="/arrow-left.png" alt="arrow-left" className="w-full h-[80%]" />
+      <Link href="/boards" className="absolute top-[10px] left-[10px] w-30 h-30 text-white border-none rounded-full cursor-pointer" title="Сюда нажмешь - назад попадешь">
+        <img src="/rock_back.png" alt="rock_back" className="w-full h-full " />
       </Link>
       <UserProfile />
 

@@ -33,7 +33,7 @@ const ListComponent: React.FC<ListComponentProps> = ({title, issues, onDelete, b
       {title !== "Закрытые" && (
         <Link
           href={`/boards/${boardId}/add-issue?label=${listLabel || ''}`}
-          className="mt-4 mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          className="mt-4 mb-4 px-4 py-2 bg-gray-500 text-white border border-white rounded-md hover:bg-gray-600"
         >
           + Добавить задачу
         </Link>
